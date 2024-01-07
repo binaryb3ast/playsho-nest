@@ -1,10 +1,15 @@
 {
   "user_default_first_name" : "",
   "user_default_last_name" : "",
-
   "without_title": "بدون عنوان",
   "without_description": "بدون توضیحات",
   "access_denied": "دسترسی رد شد",
+  "not_found": "یافت نشد",
+  "otp_incorrect": "کد وارد شده اشتباه است",
+  "otp_expired": "کد منقضی شده است",
+  "must_wait_couple_minute": "چند دقیقه تا درخواست بعدی صبر کنید",
+  "fail_response": "متاسفانه درخواست شما متوقف شد",
+  "success_response": "درخواست شما با موفقیت انجام شد",
   "unauthorized": "unauthorized",
   "active": "فعال",
   "online": "آنلاین",

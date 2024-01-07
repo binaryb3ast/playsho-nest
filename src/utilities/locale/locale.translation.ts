@@ -6,7 +6,7 @@ import * as process from 'process';
 const Translate = (key: string, ...arg): string => {
   const filePath = path.join(
     process.cwd(),
-    process.env.NODE_ENV == 'development' ? 'src' : '',
+    'src',
     'utilities',
     'locale',
     'common.json',

@@ -6,7 +6,7 @@ import { DeviceLoader } from './device.loader';
 @Schema()
 export class Device extends Document {
   @Prop({
-    type: MongooseSchema.Types.UUID,
+    type: MongooseSchema.Types.String,
     trim: true,
     unique: true,
     index: true,

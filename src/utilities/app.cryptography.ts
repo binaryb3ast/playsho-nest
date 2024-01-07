@@ -33,26 +33,6 @@ export default class AppCryptography {
       .join('-');
   }
 
-  static encryptWithPublicKey(publicKey: string, data): Buffer {
-    return Crypto.publicEncrypt(
-      {
-        key: publicKey,
-        oaepHash: this.DIGEST_SHA256,
-      },
-      Buffer.from(data),
-    );
-  }
-
-  static decryptWithPrivateKey(privateKey: string, encryptedData): Buffer {
-    return Crypto.privateDecrypt(
-      {
-        key: privateKey,
-        oaepHash: this.DIGEST_SHA256,
-      },
-      encryptedData,
-    );
-  }
-
   static createHmac(algorithm: string, secret: string, data: string): string {
     return Crypto.createHmac(algorithm, secret).update(data).digest('hex');
   }
@@ -88,13 +68,27 @@ export default class AppCryptography {
     return result;
   }
 
-  static generateRandomNumber(n: number): string {
-    const bytesNeeded = Math.ceil(n * 0.5);
-    const randomByte = Crypto.randomBytes(bytesNeeded);
-    const hexString = randomByte.toString('hex');
-    const randomNumber = parseInt(hexString, 16);
-    const digits = randomNumber.toString().split('');
-    return digits.slice(0, n).join('');
+  static generateSecureRandomNumber(length: number): string {
+    const bytes = Math.ceil(length / 2);
+    const randomBuffer = Crypto.randomBytes(bytes);
+    const randomNumber = BigInt(`0x${randomBuffer.toString('hex')}`);
+    let result = randomNumber.toString();
+    if (result.length > length) {
+      result = result.slice(0, length);
+    } else {
+      result = result.padStart(length, '0');
+    }
+    return result;
+  }
+
+  static generateSecureNumber(min: number, max: number): number {
+    return Crypto.randomInt(min, max);
+  }
+
+  static generateRandomNumber(length: number): number {
+    const min = 10 ** (length - 1);
+    const max = 10 ** length - 1;
+    return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
   static createSalt(byteLength: number): string {

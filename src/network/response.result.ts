@@ -1,6 +1,6 @@
 import { ErrorResponse } from './response.error';
 
-export interface Result<T> {
+export interface ResponseResult<T> {
   code?: number;
   message: string;
   errors?: [ErrorResponse];

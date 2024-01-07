@@ -12,6 +12,7 @@ import { TokenModule } from './token/token.module';
 import { TerminusModule } from "@nestjs/terminus";
 import { HealthModule } from "./health/health.module";
 import { DeviceModule } from './device/device.module';
+import { PassportModule } from './passport/passport.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { DeviceModule } from './device/device.module';
     UserModule,
     TokenModule,
     DeviceModule,
+    PassportModule,
   ],
   controllers: [AppController],
   providers: [

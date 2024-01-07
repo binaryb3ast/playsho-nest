@@ -7,7 +7,13 @@ import { UserGenderEnum } from './enum/user.gender.enum';
 
 @Schema()
 export class User extends Document {
-  @Prop({ trim: true, unique: true, index: true })
+  @Prop({
+    type: MongooseSchema.Types.String,
+    trim: true,
+    unique: true,
+    index: true,
+    default: () => AppCryptography.generateUUID(),
+  })
   tag: string;
 
   @Prop({
@@ -55,7 +61,7 @@ export class User extends Document {
 
   @Prop({
     trim: true,
-    default: UserStatusEnum.ACTIVE,
+    default: UserStatusEnum.NEED_VERIFICATION,
   })
   status: string;
 
