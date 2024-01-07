@@ -77,7 +77,7 @@ export class User extends Document {
 
   @Prop({
     default: null,
-    set: (value) => value.toLowerCase(),
+    set: (value:string) => value.toLowerCase().trim(),
     index: {
       unique: true,
       partialFilterExpression: { username: { $type: 'string' } },
@@ -88,7 +88,7 @@ export class User extends Document {
 
   @Prop({
     default: null,
-    set: (value) => value.toLowerCase(),
+    set: (value:string) => value.toLowerCase().trim(),
     index: {
       unique: true,
       partialFilterExpression: { email: { $type: 'string' } },
