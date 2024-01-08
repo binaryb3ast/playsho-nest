@@ -22,10 +22,11 @@ export class PassportService {
     return this.model.findOne({ device, receptor }).select(projection);
   }
 
-  async findOneByTag(
-    tag: string,
-    projection = '',
-  ): Promise<Passport> {
-    return this.model.findOne({tag }).select(projection);
+  async findOneByTag(tag: string, projection = ''): Promise<Passport> {
+    return this.model.findOne({ tag }).select(projection);
+  }
+
+  async deleteById(id: any): Promise<void> {
+    await this.model.deleteOne({ _id: id });
   }
 }

@@ -8,13 +8,21 @@ import { TokenStatusEnum } from './enum/token.status.enum';
 @Schema()
 export class Token extends Document {
   @Prop({
-    type: MongooseSchema.Types.UUID,
+    type: MongooseSchema.Types.String,
     trim: true,
     unique: true,
     index: true,
     default: () => AppCryptography.generateUUID(),
   })
   tag: string;
+
+  @Prop({
+    type: MongooseSchema.Types.String,
+    trim: true,
+    unique: true,
+    index: true,
+  })
+  identifier: string;
 
   @Prop({
     type: MongooseSchema.Types.ObjectId,

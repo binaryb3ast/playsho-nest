@@ -9,8 +9,8 @@ import { UserModule } from './user/user.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { TokenModule } from './token/token.module';
-import { TerminusModule } from "@nestjs/terminus";
-import { HealthModule } from "./health/health.module";
+import { TerminusModule } from '@nestjs/terminus';
+import { HealthModule } from './health/health.module';
 import { DeviceModule } from './device/device.module';
 import { PassportModule } from './passport/passport.module';
 
@@ -31,6 +31,7 @@ import { PassportModule } from './passport/passport.module';
       },
     ]),
     JwtModule.register({
+      global: true,
       secret: process.env.JWT_SECRET,
     }),
     TerminusModule.forRoot({

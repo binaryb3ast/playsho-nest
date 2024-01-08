@@ -20,12 +20,16 @@ import { PassportService } from '../passport/passport.service';
 import AppCryptography from '../utilities/app.cryptography';
 import { AppUtils } from '../utilities/app.utils';
 import { UserVerifyDto } from './dto/user.verify.dto';
+import { TokenService } from '../token/token.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller('api/user')
 export class UserApiController {
   constructor(
     private readonly userService: UserService,
     private readonly deviceService: DeviceService,
+    private readonly tokenService: TokenService,
+    private readonly jwtService: JwtService,
     private readonly passportService: PassportService,
   ) {}
 
@@ -87,7 +91,7 @@ export class UserApiController {
       );
     }
     const passport = await this.passportService.create({
-      receptor: payload.phone_number,
+      receptor: user.phone_number,
       device: device.tag,
       secret: String(AppCryptography.generateSecureNumber(1000, 9999)),
       expire_at: new Date(),
@@ -107,7 +111,10 @@ export class UserApiController {
     @Req() request: Request,
     @Body() payload: UserVerifyDto,
   ): Promise<ResponseResult<any>> {
-    const device = await this.deviceService.findOneByTag(payload.device, 'tag');
+    const device = await this.deviceService.findOneByTag(
+      payload.device,
+      'tag _id',
+    );
     if (!device) {
       throw new ResponseException(
         {
@@ -139,7 +146,10 @@ export class UserApiController {
         HttpStatus.NOT_FOUND,
       );
     }
-    if (passport.secret !== payload.otp && passport.device !== payload.device) {
+    if (
+      String(passport.secret) !== String(payload.otp) ||
+      passport.device !== payload.device
+    ) {
       throw new ResponseException(
         {
           errors: [
@@ -154,11 +164,180 @@ export class UserApiController {
         HttpStatus.NOT_FOUND,
       );
     }
-
+    const user = await this.userService.findByPhoneNumber(
+      passport.receptor,
+      '_id tag first_name last_name',
+    );
+    if (!user) {
+      throw new ResponseException(
+        {
+          errors: [
+            {
+              property: 'user',
+              message: Translate('not_found'),
+            },
+          ],
+          message: Translate('fail_response'),
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    let token = await this.tokenService.findOneByUserDevice(
+      device._id,
+      user._id,
+    );
+    if (!token) {
+      token = await this.tokenService.create({
+        user: user._id,
+        device: device._id,
+        identifier: AppCryptography.createHash(
+          user.tag + device.tag + Date.now(),
+        ),
+      });
+    } else {
+      token = await this.tokenService.updateIdentifier(
+        token._id,
+        AppCryptography.createHash(user.tag + device.tag + Date.now()),
+      );
+    }
+    const jwtToken = await this.jwtService.signAsync(
+      {
+        t: token.tag,
+      },
+      {
+        jwtid: token.identifier,
+        subject: user.tag,
+      },
+    );
+    await this.passportService.deleteById(passport._id);
     return {
       message: Translate('success_response'),
       result: {
-        passport: passport.tag,
+        token: jwtToken,
+        user: {
+          tag: user.tag,
+          first_name: user.first_name,
+          last_name: user.last_name,
+        },
+      },
+    };
+  }
+
+  @Version('1')
+  @Post('/register')
+  @HttpCode(HttpStatus.OK)
+  async register(
+    @Req() request: Request,
+    @Body() payload: UserVerifyDto,
+  ): Promise<ResponseResult<any>> {
+    const device = await this.deviceService.findOneByTag(
+      payload.device,
+      'tag _id',
+    );
+    if (!device) {
+      throw new ResponseException(
+        {
+          errors: [
+            {
+              property: 'device',
+              value: payload.device,
+              message: Translate('not_found'),
+            },
+          ],
+          message: Translate('fail_response'),
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    const passport = await this.passportService.findOneByTag(payload.passport);
+    if (!passport) {
+      throw new ResponseException(
+        {
+          errors: [
+            {
+              property: 'passport',
+              value: payload.passport,
+              message: Translate('otp_expired'),
+            },
+          ],
+          message: Translate('fail_response'),
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    if (
+      String(passport.secret) !== String(payload.otp) ||
+      passport.device !== payload.device
+    ) {
+      throw new ResponseException(
+        {
+          errors: [
+            {
+              property: 'passport',
+              value: payload.passport,
+              message: Translate('otp_incorrect'),
+            },
+          ],
+          message: Translate('fail_response'),
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    const user = await this.userService.findByPhoneNumber(
+      passport.receptor,
+      '_id tag first_name last_name',
+    );
+    if (!user) {
+      throw new ResponseException(
+        {
+          errors: [
+            {
+              property: 'user',
+              message: Translate('not_found'),
+            },
+          ],
+          message: Translate('fail_response'),
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    let token = await this.tokenService.findOneByUserDevice(
+      device._id,
+      user._id,
+    );
+    if (!token) {
+      token = await this.tokenService.create({
+        user: user._id,
+        device: device._id,
+        identifier: AppCryptography.createHash(
+          user.tag + device.tag + Date.now(),
+        ),
+      });
+    } else {
+      token = await this.tokenService.updateIdentifier(
+        token._id,
+        AppCryptography.createHash(user.tag + device.tag + Date.now()),
+      );
+    }
+    const jwtToken = await this.jwtService.signAsync(
+      {
+        t: token.tag,
+      },
+      {
+        jwtid: token.identifier,
+        subject: user.tag,
+      },
+    );
+    await this.passportService.deleteById(passport._id);
+    return {
+      message: Translate('success_response'),
+      result: {
+        token: jwtToken,
+        user: {
+          tag: user.tag,
+          first_name: user.first_name,
+          last_name: user.last_name,
+        },
       },
     };
   }

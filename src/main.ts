@@ -17,9 +17,6 @@ async function bootstrap() {
       exceptionFactory: ResponsesExceptionFactory,
     }),
   );
-  for (let i = 0; i < 10; i++) {
-    console.log(AppCryptography.generateUUID());
-  }
   await app.listen(3000);
 }
 

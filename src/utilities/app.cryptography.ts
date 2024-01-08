@@ -115,6 +115,10 @@ export default class AppCryptography {
     return Crypto.createHmac('sha256', key).update(data).digest(encoding);
   };
 
+  static createHash(data: string = AppCryptography.generateUUID()): string {
+    return Crypto.createHash('sha256').update(data).digest('hex');
+  }
+
   static generateInitializationVector = () => {
     return Crypto.randomBytes(this.IV_LENGTH);
   };
