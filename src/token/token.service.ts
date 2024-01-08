@@ -16,11 +16,18 @@ export class TokenService {
     return this.model.findOne({ device, user }).select(projection);
   }
 
+  async findByIdentifier(
+    identifier: string,
+    projection = '',
+  ): Promise<Token> {
+    return this.model.findOne({ identifier }).select(projection);
+  }
+
   async create(payload: TokenCreateDto): Promise<Token> {
     return await new this.model(payload).save();
   }
 
-  async updateIdentifier(id: any, identifier: string) {
+  async updateIdentifier(id: any, identifier: string):Promise<Token> {
     return this.model.findByIdAndUpdate(
       id,
       {

@@ -5,6 +5,7 @@
   "without_description": "بدون توضیحات",
   "access_denied": "دسترسی رد شد",
   "not_found": "یافت نشد",
+  "auth_fail": "احراز هویت به مشکل بر خورد.",
   "otp_incorrect": "کد وارد شده اشتباه است",
   "otp_expired": "کد منقضی شده است",
   "must_wait_couple_minute": "چند دقیقه تا درخواست بعدی صبر کنید",

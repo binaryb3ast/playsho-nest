@@ -61,7 +61,7 @@ export class User extends Document {
 
   @Prop({
     trim: true,
-    default: UserStatusEnum.NEED_VERIFICATION,
+    default: UserStatusEnum.NEED_REGISTER,
   })
   status: string;
 
