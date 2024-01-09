@@ -13,6 +13,6 @@ import { Passport, PassportSchema } from './passport.entity';
   ],
   controllers: [PassportController],
   providers: [PassportService],
-  exports:[PassportService]
+  exports: [PassportService],
 })
 export class PassportModule {}

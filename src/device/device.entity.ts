@@ -26,21 +26,21 @@ export class Device extends Document {
   @Prop({
     trim: true,
     default: null,
-    set: (value:string) => value.toLowerCase().trim(),
+    set: (value: string) => value.toLowerCase().trim(),
   })
   brand: string;
 
   @Prop({
     trim: true,
     default: null,
-    set: (value:string) => value.toLowerCase().trim(),
+    set: (value: string) => value.toLowerCase().trim(),
   })
   model: string;
 
   @Prop({
     trim: true,
     default: null,
-    set: (value:string) => value.toLowerCase().trim(),
+    set: (value: string) => value.toLowerCase().trim(),
   })
   manufacturer: string;
 
@@ -50,14 +50,14 @@ export class Device extends Document {
   @Prop({
     trim: true,
     default: 'unknown',
-    set: (value:string) => value.toLowerCase().trim(),
+    set: (value: string) => value.toLowerCase().trim(),
   })
   store: string;
 
   @Prop({
     trim: true,
     default: 'unknown',
-    set: (value:string) => value.toLowerCase().trim(),
+    set: (value: string) => value.toLowerCase().trim(),
   })
   os: string;
 
@@ -67,7 +67,7 @@ export class Device extends Document {
   @Prop({
     trim: true,
     default: 'unknown',
-    set: (value:string) => value.toLowerCase().trim(),
+    set: (value: string) => value.toLowerCase().trim(),
   })
   app_version_name: string;
 

@@ -13,6 +13,9 @@ import { TerminusModule } from '@nestjs/terminus';
 import { HealthModule } from './health/health.module';
 import { DeviceModule } from './device/device.module';
 import { PassportModule } from './passport/passport.module';
+import { FieldofstudyModule } from './fieldofstudy/fieldofstudy.module';
+import { SubjectModule } from './subject/subject.module';
+import { TokenGuard } from './token/token.gaurd';
 
 @Module({
   imports: [
@@ -42,10 +45,16 @@ import { PassportModule } from './passport/passport.module';
     TokenModule,
     DeviceModule,
     PassportModule,
+    FieldofstudyModule,
+    SubjectModule,
   ],
   controllers: [AppController],
   providers: [
     AppService,
+    {
+      provide: APP_GUARD,
+      useClass: TokenGuard,
+    },
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,

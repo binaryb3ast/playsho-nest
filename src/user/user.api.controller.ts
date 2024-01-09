@@ -1,4 +1,14 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, UseGuards, Version } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Req,
+  UseGuards,
+  Version,
+} from '@nestjs/common';
 import { Request } from 'express';
 import { ResponseResult } from '../network/response.result';
 import Translate from '../utilities/locale/locale.translation';
@@ -25,8 +35,7 @@ export class UserApiController {
     private readonly tokenService: TokenService,
     private readonly jwtService: JwtService,
     private readonly passportService: PassportService,
-  ) {
-  }
+  ) {}
 
   @Version('1')
   @Post('/login')
@@ -227,8 +236,17 @@ export class UserApiController {
     @Body() payload: UserRegisterDto,
   ): Promise<ResponseResult<any>> {
     console.log(request['user']);
-    let user = await this.userService.updateNameById(request['user']._id, payload.first_name, payload.last_name, 'first_name last_name');
-    await this.userService.updateStatusById(request['user']._id, UserStatusEnum.ACTIVE, 'tag');
+    const user = await this.userService.updateNameById(
+      request['user']._id,
+      payload.first_name,
+      payload.last_name,
+      'first_name last_name',
+    );
+    await this.userService.updateStatusById(
+      request['user']._id,
+      UserStatusEnum.ACTIVE,
+      'tag',
+    );
     return {
       message: Translate('success_response'),
       result: {
@@ -244,13 +262,11 @@ export class UserApiController {
   @Get('/me')
   @HttpCode(HttpStatus.OK)
   @UseGuards(TokenGuard)
-  async getMe(
-    @Req() request: Request,
-  ): Promise<ResponseResult<any>> {
-   return {
+  async getMe(@Req() request: Request): Promise<ResponseResult<any>> {
+    return {
       message: Translate('success_response'),
       result: {
-        user:request['user'],
+        user: request['user'],
       },
     };
   }

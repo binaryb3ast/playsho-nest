@@ -5,7 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './user.entity';
 import { DeviceModule } from '../device/device.module';
 import { PassportModule } from '../passport/passport.module';
-import { TokenModule } from "../token/token.module";
+import { TokenModule } from '../token/token.module';
 
 @Module({
   imports: [

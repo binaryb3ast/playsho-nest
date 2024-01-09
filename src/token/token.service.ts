@@ -16,10 +16,7 @@ export class TokenService {
     return this.model.findOne({ device, user }).select(projection);
   }
 
-  async findByIdentifier(
-    identifier: string,
-    projection = '',
-  ): Promise<Token> {
+  async findByIdentifier(identifier: string, projection = ''): Promise<Token> {
     return this.model.findOne({ identifier }).select(projection);
   }
 
@@ -27,7 +24,7 @@ export class TokenService {
     return await new this.model(payload).save();
   }
 
-  async updateIdentifier(id: any, identifier: string):Promise<Token> {
+  async updateIdentifier(id: any, identifier: string): Promise<Token> {
     return this.model.findByIdAndUpdate(
       id,
       {
