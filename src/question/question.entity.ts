@@ -2,10 +2,11 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema } from 'mongoose';
 import AppCryptography from '../utilities/app.cryptography';
 import { MembershipTypeEnum } from '../membership/enum/membership.type.enum';
-import { FieldOfStudy } from '../major/major.entity';
+import { Subject } from '../subject/subject.entity';
+import { QuestionTypeEnum } from './enum/question.type.enum';
 
 @Schema()
-export class Subject extends Document {
+export class Question extends Document {
   @Prop({
     type: MongooseSchema.Types.String,
     trim: true,
@@ -20,39 +21,47 @@ export class Subject extends Document {
     trim: true,
     default: '',
   })
-  title: string;
+  content: string;
 
   @Prop({
-    type: MongooseSchema.Types.Number,
-    default: 0,
+    type: MongooseSchema.Types.String,
+    trim: true,
+    default: '',
   })
-  unlock_cost: number;
-
-  @Prop({
-    type: MongooseSchema.Types.Number,
-    default: 0,
-  })
-  question_count: number;
+  image_path: string;
 
   @Prop({
     type: MongooseSchema.Types.Number,
     default: 1,
   })
-  weight: number;
+  difficulty_level: number;
+
+  @Prop({
+    type: MongooseSchema.Types.Number, // Add a coin bonus field
+    default: 1,
+  })
+  coin_reward: number;
 
   @Prop({
     type: MongooseSchema.Types.String,
-    enum: MembershipTypeEnum,
-    default: MembershipTypeEnum.BASIC,
+    enum: QuestionTypeEnum,
+    default: QuestionTypeEnum.MULTIPLE_CHOICE,
   })
-  membership_type: MembershipTypeEnum;
+  type: QuestionTypeEnum;
 
   @Prop({
     type: MongooseSchema.Types.ObjectId,
-    ref: FieldOfStudy.name,
+    ref: Subject.name,
     default: null,
   })
-  field_of_study: MongooseSchema.Types.ObjectId;
+  subject: MongooseSchema.Types.ObjectId;
+
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    ref: Subject.name,
+    default: null,
+  })
+  answer: MongooseSchema.Types.ObjectId;
 
   @Prop({ default: null })
   locked_until: Date;
@@ -67,13 +76,12 @@ export class Subject extends Document {
   created_at: Date;
 }
 
-export const SubjectSchema = SchemaFactory.createForClass(Subject);
+export const QuestionSchema = SchemaFactory.createForClass(Question);
 
-SubjectSchema.pre<Subject>('updateOne', async function (next) {
-  // this.update({}, { $set: { updatedAt: new Date() } });
+QuestionSchema.pre<Subject>('updateOne', async function (next) {
   next();
 });
 
-SubjectSchema.pre<Subject>('save', async function (next) {
+QuestionSchema.pre<Subject>('save', async function (next) {
   next();
 });

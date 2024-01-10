@@ -17,6 +17,7 @@ export class User extends Document {
   tag: string;
 
   @Prop({
+    type: MongooseSchema.Types.String,
     trim: true,
     default: function () {
       return Translate('user');
@@ -25,6 +26,7 @@ export class User extends Document {
   first_name: string;
 
   @Prop({
+    type: MongooseSchema.Types.String,
     trim: true,
     default: function () {
       return Translate('alpha');
@@ -32,16 +34,32 @@ export class User extends Document {
   })
   last_name: string;
 
-  @Prop({ trim: true, default: 'user' })
+  @Prop({
+    type: MongooseSchema.Types.String,
+    trim: true,
+    default: 'user',
+  })
   role: string;
 
-  @Prop({ trim: true, default: UserGenderEnum.PREFER_NOT_TO_SAY })
+  @Prop({
+    type: MongooseSchema.Types.String,
+    trim: true,
+    default: UserGenderEnum.PREFER_NOT_TO_SAY,
+  })
   sex: string;
 
-  @Prop({ trim: true, unique: true })
+  @Prop({
+    type: MongooseSchema.Types.String,
+    trim: true,
+    unique: true,
+  })
   referral_code: string;
 
-  @Prop({ trim: true, default: '' })
+  @Prop({
+    type: MongooseSchema.Types.String,
+    trim: true,
+    default: '',
+  })
   bio: string;
 
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'File', default: null })
@@ -50,22 +68,36 @@ export class User extends Document {
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: User.name, default: null })
   referrer: MongooseSchema.Types.ObjectId;
 
-  @Prop({ trim: true, default: null })
+  @Prop({
+    type: MongooseSchema.Types.String,
+    trim: true,
+    default: null,
+  })
   password: string;
 
-  @Prop({ trim: true, default: null })
+  @Prop({
+    type: MongooseSchema.Types.String,
+    trim: true,
+    default: null,
+  })
   salt: string;
 
-  @Prop({ trim: true, default: null })
+  @Prop({
+    type: MongooseSchema.Types.String,
+    trim: true,
+    default: null,
+  })
   membership: string;
 
   @Prop({
+    type: UserStatusEnum,
     trim: true,
     default: UserStatusEnum.NEED_REGISTER,
   })
   status: string;
 
   @Prop({
+    type: MongooseSchema.Types.String,
     default: null,
     index: {
       unique: true,
@@ -76,6 +108,7 @@ export class User extends Document {
   phone_number: string;
 
   @Prop({
+    type: MongooseSchema.Types.String,
     default: null,
     set: (value: string) => value.toLowerCase().trim(),
     index: {
@@ -87,6 +120,7 @@ export class User extends Document {
   username: string;
 
   @Prop({
+    type: MongooseSchema.Types.String,
     default: null,
     set: (value: string) => value.toLowerCase().trim(),
     index: {
@@ -97,31 +131,58 @@ export class User extends Document {
   })
   email: string;
 
-  @Prop({ default: null })
+  @Prop({
+    type: MongooseSchema.Types.Date,
+    default: null,
+  })
   last_login: Date;
 
-  @Prop({ default: 0 })
+  @Prop({
+    type: MongooseSchema.Types.Number,
+    default: 0,
+  })
   failed_login_attempts: number;
 
-  @Prop({ default: null })
+  @Prop({
+    type: MongooseSchema.Types.Date,
+    default: null,
+  })
   locked_until: Date;
 
-  @Prop({ default: -1 })
+  @Prop({
+    type: MongooseSchema.Types.Number,
+    default: 0,
+  })
   credit: number;
 
-  @Prop({ default: -1 })
+  @Prop({
+    type: MongooseSchema.Types.Number,
+    default: -1,
+  })
   last_seen_at: number;
 
-  @Prop({ default: null })
+  @Prop({
+    type: MongooseSchema.Types.Date,
+    default: null,
+  })
   birthday_at: Date;
 
-  @Prop({ default: Date.now })
+  @Prop({
+    type: MongooseSchema.Types.Date,
+    default: Date.now,
+  })
   updated_at: Date;
 
-  @Prop({ default: null })
+  @Prop({
+    type: MongooseSchema.Types.Date,
+    default: null,
+  })
   deleted_at: Date;
 
-  @Prop({ default: Date.now })
+  @Prop({
+    type: MongooseSchema.Types.Date,
+    default: Date.now,
+  })
   created_at: Date;
 }
 

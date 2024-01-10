@@ -2,10 +2,10 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema } from 'mongoose';
 import AppCryptography from '../utilities/app.cryptography';
 import { MembershipTypeEnum } from '../membership/enum/membership.type.enum';
-import { FieldOfStudy } from '../major/major.entity';
+import { Subject } from '../subject/subject.entity';
 
 @Schema()
-export class Subject extends Document {
+export class Chapter extends Document {
   @Prop({
     type: MongooseSchema.Types.String,
     trim: true,
@@ -30,15 +30,15 @@ export class Subject extends Document {
 
   @Prop({
     type: MongooseSchema.Types.Number,
-    default: 0,
+    default: 1,
   })
-  question_count: number;
+  importance: number;
 
   @Prop({
     type: MongooseSchema.Types.Number,
-    default: 1,
+    default: 0,
   })
-  weight: number;
+  sort: number;
 
   @Prop({
     type: MongooseSchema.Types.String,
@@ -49,31 +49,43 @@ export class Subject extends Document {
 
   @Prop({
     type: MongooseSchema.Types.ObjectId,
-    ref: FieldOfStudy.name,
+    ref: Subject.name,
     default: null,
   })
-  field_of_study: MongooseSchema.Types.ObjectId;
+  subject: MongooseSchema.Types.ObjectId;
 
-  @Prop({ default: null })
+  @Prop({
+    type: MongooseSchema.Types.Date,
+    default: null,
+  })
   locked_until: Date;
 
-  @Prop({ default: Date.now })
+  @Prop({
+    type: MongooseSchema.Types.Date,
+    default: Date.now,
+  })
   updated_at: Date;
 
-  @Prop({ default: null })
+  @Prop({
+    type: MongooseSchema.Types.Date,
+    default: null,
+  })
   deleted_at: Date;
 
-  @Prop({ default: Date.now })
+  @Prop({
+    type: MongooseSchema.Types.Date,
+    default: Date.now,
+  })
   created_at: Date;
 }
 
-export const SubjectSchema = SchemaFactory.createForClass(Subject);
+export const ChapterSchema = SchemaFactory.createForClass(Chapter);
 
-SubjectSchema.pre<Subject>('updateOne', async function (next) {
+ChapterSchema.pre<Subject>('updateOne', async function (next) {
   // this.update({}, { $set: { updatedAt: new Date() } });
   next();
 });
 
-SubjectSchema.pre<Subject>('save', async function (next) {
+ChapterSchema.pre<Subject>('save', async function (next) {
   next();
 });

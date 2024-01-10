@@ -3,7 +3,7 @@ import { Document, Schema as MongooseSchema } from 'mongoose';
 import AppCryptography from '../utilities/app.cryptography';
 
 @Schema()
-export class FieldOfStudy extends Document {
+export class Major extends Document {
   @Prop({
     type: MongooseSchema.Types.String,
     trim: true,
@@ -31,13 +31,13 @@ export class FieldOfStudy extends Document {
   created_at: Date;
 }
 
-export const FieldOfStudySchema = SchemaFactory.createForClass(FieldOfStudy);
+export const MajorSchema = SchemaFactory.createForClass(Major);
 
-FieldOfStudySchema.pre<FieldOfStudy>('updateOne', async function (next) {
+MajorSchema.pre<Major>('updateOne', async function (next) {
   // this.update({}, { $set: { updatedAt: new Date() } });
   next();
 });
 
-FieldOfStudySchema.pre<FieldOfStudy>('save', async function (next) {
+MajorSchema.pre<Major>('save', async function (next) {
   next();
 });
