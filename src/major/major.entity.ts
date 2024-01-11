@@ -14,20 +14,33 @@ export class Major extends Document {
   tag: string;
 
   @Prop({
+    type: MongooseSchema.Types.String,
     trim: true,
   })
   name: string;
 
-  @Prop({ default: null })
+  @Prop({
+    type: MongooseSchema.Types.Date,
+    default: null,
+  })
   locked_until: Date;
 
-  @Prop({ default: Date.now })
+  @Prop({
+    type: MongooseSchema.Types.Date,
+    default: Date.now,
+  })
   updated_at: Date;
 
-  @Prop({ default: null })
+  @Prop({
+    type: MongooseSchema.Types.Date,
+    default: null,
+  })
   deleted_at: Date;
 
-  @Prop({ default: Date.now })
+  @Prop({
+    type: MongooseSchema.Types.Date,
+    default: Date.now,
+  })
   created_at: Date;
 }
 

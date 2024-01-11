@@ -1,11 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema } from 'mongoose';
 import AppCryptography from '../utilities/app.cryptography';
-import { MembershipTypeEnum } from '../membership/enum/membership.type.enum';
-import { Major } from '../major/major.entity';
+import { CurrencyTypeEnum } from './enum/currency.type.enum';
+import { User } from '../user/user.entity';
 
 @Schema()
-export class Subject extends Document {
+export class Currency extends Document {
   @Prop({
     type: MongooseSchema.Types.String,
     trim: true,
@@ -17,48 +17,29 @@ export class Subject extends Document {
 
   @Prop({
     type: MongooseSchema.Types.String,
-    trim: true,
-    default: '',
+    enum: CurrencyTypeEnum,
+    default: CurrencyTypeEnum.COIN,
   })
-  title: string;
+  type: CurrencyTypeEnum;
 
   @Prop({
     type: MongooseSchema.Types.Number,
     default: 0,
   })
-  unlock_cost: number;
-
-  @Prop({
-    type: MongooseSchema.Types.Number,
-    default: 0,
-  })
-  question_count: number;
-
-  @Prop({
-    type: MongooseSchema.Types.Number,
-    default: 1,
-  })
-  weight: number;
+  amount: number;
 
   @Prop({
     type: MongooseSchema.Types.String,
-    enum: MembershipTypeEnum,
-    default: MembershipTypeEnum.BASIC,
+    default: null,
   })
-  membership_type: MembershipTypeEnum;
+  source: string;
 
   @Prop({
     type: MongooseSchema.Types.ObjectId,
-    ref: Major.name,
+    ref: User.name,
     default: null,
   })
-  field_of_study: MongooseSchema.Types.ObjectId;
-
-  @Prop({
-    type: MongooseSchema.Types.Date,
-    default: null,
-  })
-  locked_until: Date;
+  user: MongooseSchema.Types.ObjectId;
 
   @Prop({
     type: MongooseSchema.Types.Date,
@@ -79,13 +60,13 @@ export class Subject extends Document {
   created_at: Date;
 }
 
-export const SubjectSchema = SchemaFactory.createForClass(Subject);
+export const CurrencySchema = SchemaFactory.createForClass(Currency);
 
-SubjectSchema.pre<Subject>('updateOne', async function (next) {
+CurrencySchema.pre<Currency>('updateOne', async function (next) {
   // this.update({}, { $set: { updatedAt: new Date() } });
   next();
 });
 
-SubjectSchema.pre<Subject>('save', async function (next) {
+CurrencySchema.pre<Currency>('save', async function (next) {
   next();
 });

@@ -4,6 +4,7 @@ import AppCryptography from '../utilities/app.cryptography';
 import { UserStatusEnum } from './enum/user.status.enum';
 import Translate from '../utilities/locale/locale.translation';
 import { UserGenderEnum } from './enum/user.gender.enum';
+import { UserEducationEnum } from './enum/user.education.enum';
 
 @Schema()
 export class User extends Document {
@@ -51,6 +52,13 @@ export class User extends Document {
   @Prop({
     type: MongooseSchema.Types.String,
     trim: true,
+    default: null,
+  })
+  education_level: UserEducationEnum;
+
+  @Prop({
+    type: MongooseSchema.Types.String,
+    trim: true,
     unique: true,
   })
   referral_code: string;
@@ -62,10 +70,18 @@ export class User extends Document {
   })
   bio: string;
 
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'File', default: null })
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    ref: 'File',
+    default: null,
+  })
   avatar: MongooseSchema.Types.ObjectId;
 
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: User.name, default: null })
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    ref: User.name,
+    default: null,
+  })
   referrer: MongooseSchema.Types.ObjectId;
 
   @Prop({
@@ -90,11 +106,11 @@ export class User extends Document {
   membership: string;
 
   @Prop({
-    type: UserStatusEnum,
+    type: MongooseSchema.Types.String,
     trim: true,
     default: UserStatusEnum.NEED_REGISTER,
   })
-  status: string;
+  status: UserStatusEnum;
 
   @Prop({
     type: MongooseSchema.Types.String,
@@ -153,7 +169,19 @@ export class User extends Document {
     type: MongooseSchema.Types.Number,
     default: 0,
   })
-  credit: number;
+  coin_balance: number;
+
+  @Prop({
+    type: MongooseSchema.Types.Number,
+    default: 0,
+  })
+  experience: number;
+
+  @Prop({
+    type: MongooseSchema.Types.Number,
+    default: 0,
+  })
+  level: number;
 
   @Prop({
     type: MongooseSchema.Types.Number,

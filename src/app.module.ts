@@ -18,6 +18,8 @@ import { SubjectModule } from './subject/subject.module';
 import { TokenGuard } from './token/token.gaurd';
 import { ChapterModule } from './chapter/chapter.module';
 import { QuestionModule } from './question/question.module';
+import { AnswerModule } from './answer/answer.module';
+import { CurrencyModule } from './currency/currency.module';
 
 @Module({
   imports: [
@@ -51,14 +53,12 @@ import { QuestionModule } from './question/question.module';
     SubjectModule,
     ChapterModule,
     QuestionModule,
+    AnswerModule,
+    CurrencyModule,
   ],
   controllers: [AppController],
   providers: [
     AppService,
-    {
-      provide: APP_GUARD,
-      useClass: TokenGuard,
-    },
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,

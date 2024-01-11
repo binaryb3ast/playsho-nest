@@ -26,6 +26,8 @@ import { JwtService } from '@nestjs/jwt';
 import { UserRegisterDto } from './dto/user.register.dto';
 import { TokenGuard } from '../token/token.gaurd';
 import { UserStatusEnum } from './enum/user.status.enum';
+import { UserEducationEnum } from './enum/user.education.enum';
+import { UserGenderEnum } from './enum/user.gender.enum';
 
 @Controller('api/user')
 export class UserApiController {
@@ -260,13 +262,50 @@ export class UserApiController {
 
   @Version('1')
   @Get('/me')
-  @HttpCode(HttpStatus.OK)
   @UseGuards(TokenGuard)
   async getMe(@Req() request: Request): Promise<ResponseResult<any>> {
     return {
       message: Translate('success_response'),
       result: {
         user: request['user'],
+      },
+    };
+  }
+
+  @Version('1')
+  @Get('/static/education')
+  @UseGuards(TokenGuard)
+  async getStaticEducation(): Promise<ResponseResult<any>> {
+    const list: {
+      value: string;
+      label: string;
+    }[] = Object.values(UserEducationEnum).map((value) => ({
+      value,
+      label: Translate(value),
+    }));
+    return {
+      message: Translate('success_response'),
+      result: {
+        statics: list,
+      },
+    };
+  }
+
+  @Version('1')
+  @Get('/static/gender')
+  @UseGuards(TokenGuard)
+  async getStaticGender(): Promise<ResponseResult<any>> {
+    const list: {
+      value: string;
+      label: string;
+    }[] = Object.values(UserGenderEnum).map((value) => ({
+      value,
+      label: Translate(value),
+    }));
+    return {
+      message: Translate('success_response'),
+      result: {
+        statics: list,
       },
     };
   }

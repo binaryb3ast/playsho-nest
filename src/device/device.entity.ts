@@ -14,16 +14,29 @@ export class Device extends Document {
   })
   tag: string;
 
-  @Prop({ trim: true, default: null })
+  @Prop({
+    type: MongooseSchema.Types.String,
+    trim: true,
+    default: null,
+  })
   name: string;
 
-  @Prop({ trim: true, unique: true })
+  @Prop({
+    type: MongooseSchema.Types.String,
+    trim: true,
+    unique: true,
+  })
   secret: string;
 
-  @Prop({ trim: true, default: null })
+  @Prop({
+    type: MongooseSchema.Types.String,
+    trim: true,
+    default: null,
+  })
   fcm_token: string;
 
   @Prop({
+    type: MongooseSchema.Types.String,
     trim: true,
     default: null,
     set: (value: string) => value.toLowerCase().trim(),
@@ -31,6 +44,7 @@ export class Device extends Document {
   brand: string;
 
   @Prop({
+    type: MongooseSchema.Types.String,
     trim: true,
     default: null,
     set: (value: string) => value.toLowerCase().trim(),
@@ -38,6 +52,7 @@ export class Device extends Document {
   model: string;
 
   @Prop({
+    type: MongooseSchema.Types.String,
     trim: true,
     default: null,
     set: (value: string) => value.toLowerCase().trim(),
@@ -48,6 +63,7 @@ export class Device extends Document {
   os_version: string;
 
   @Prop({
+    type: MongooseSchema.Types.String,
     trim: true,
     default: 'unknown',
     set: (value: string) => value.toLowerCase().trim(),
@@ -55,35 +71,56 @@ export class Device extends Document {
   store: string;
 
   @Prop({
+    type: MongooseSchema.Types.String,
     trim: true,
     default: 'unknown',
     set: (value: string) => value.toLowerCase().trim(),
   })
   os: string;
 
-  @Prop({ trim: true, default: 1 })
+  @Prop({
+    type: MongooseSchema.Types.Number,
+    trim: true,
+    default: 1,
+  })
   app_version: number;
 
   @Prop({
+    type: MongooseSchema.Types.String,
     trim: true,
     default: 'unknown',
     set: (value: string) => value.toLowerCase().trim(),
   })
   app_version_name: string;
 
-  @Prop({ default: Date.now })
+  @Prop({
+    type: MongooseSchema.Types.Date,
+    default: Date.now,
+  })
   last_update_at: Date;
 
-  @Prop({ default: Date.now })
+  @Prop({
+    type: MongooseSchema.Types.Date,
+    default: Date.now,
+  })
   first_install_at: Date;
 
-  @Prop({ default: Date.now })
+  @Prop({
+    type: MongooseSchema.Types.Date,
+    default: Date.now,
+  })
   updated_at: Date;
 
-  @Prop({ default: null })
+  @Prop({
+    type: MongooseSchema.Types.Date,
+    default: null,
+  })
   deleted_at: Date;
 
-  @Prop({ default: Date.now })
+  @Prop({
+    type: MongooseSchema.Types.Date,
+    default: Date.now,
+  })
   created_at: Date;
 }
 
