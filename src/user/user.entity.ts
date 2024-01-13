@@ -5,6 +5,7 @@ import { UserStatusEnum } from './enum/user.status.enum';
 import Translate from '../utilities/locale/locale.translation';
 import { UserGenderEnum } from './enum/user.gender.enum';
 import { UserEducationEnum } from './enum/user.education.enum';
+import { MembershipTypeEnum } from '../membership/enum/membership.type.enum';
 
 @Schema()
 export class User extends Document {
@@ -44,10 +45,10 @@ export class User extends Document {
 
   @Prop({
     type: MongooseSchema.Types.String,
-    trim: true,
+    enum: UserGenderEnum,
     default: UserGenderEnum.PREFER_NOT_TO_SAY,
   })
-  sex: string;
+  sex: UserGenderEnum;
 
   @Prop({
     type: MongooseSchema.Types.String,
@@ -94,16 +95,16 @@ export class User extends Document {
   @Prop({
     type: MongooseSchema.Types.String,
     trim: true,
-    default: null,
+    default: () => AppCryptography.createSalt(32),
   })
   salt: string;
 
   @Prop({
     type: MongooseSchema.Types.String,
-    trim: true,
-    default: null,
+    enum: MembershipTypeEnum,
+    default: MembershipTypeEnum.BASIC,
   })
-  membership: string;
+  membership: MembershipTypeEnum;
 
   @Prop({
     type: MongooseSchema.Types.String,
@@ -152,6 +153,12 @@ export class User extends Document {
     default: null,
   })
   last_login: Date;
+
+  @Prop({
+    type: MongooseSchema.Types.Date,
+    default: null,
+  })
+  membership_expire_at: Date;
 
   @Prop({
     type: MongooseSchema.Types.Number,
@@ -224,15 +231,5 @@ UserSchema.pre<User>('updateOne', async function (next) {
 UserSchema.pre<User>('save', async function (next) {
   const mod = <Model<User>>this.constructor;
   this.referral_code = String((await mod.countDocuments({})) + 1000);
-  this.tag = AppCryptography.generateUUID();
-  this.salt = AppCryptography.createSalt(32);
-  if (this.email) {
-    this.email = this.email.toLocaleLowerCase().trim();
-  }
-  this.password = AppCryptography.createHmac(
-    AppCryptography.DIGEST_SHA256,
-    this.salt,
-    this.password ? this.password : AppCryptography.generateNanoID(10),
-  );
   next();
 });
