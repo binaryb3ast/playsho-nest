@@ -221,14 +221,15 @@ export class User extends Document {
   created_at: Date;
 }
 
-export const UserSchema = SchemaFactory.createForClass(User);
+export const UserSchema: MongooseSchema<User> =
+  SchemaFactory.createForClass(User);
 
-UserSchema.pre<User>('updateOne', async function (next) {
+UserSchema.pre<User>('updateOne', async function (next): Promise<void> {
   // this.update({}, { $set: { updatedAt: new Date() } });
   next();
 });
 
-UserSchema.pre<User>('save', async function (next) {
+UserSchema.pre<User>('save', async function (next): Promise<void> {
   const mod = <Model<User>>this.constructor;
   this.referral_code = String((await mod.countDocuments({})) + 1000);
   next();
