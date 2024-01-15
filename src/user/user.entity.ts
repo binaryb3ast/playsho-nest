@@ -186,12 +186,6 @@ export class User extends Document {
 
   @Prop({
     type: MongooseSchema.Types.Number,
-    default: 0,
-  })
-  level: number;
-
-  @Prop({
-    type: MongooseSchema.Types.Number,
     default: -1,
   })
   last_seen_at: number;
