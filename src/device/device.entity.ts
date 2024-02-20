@@ -24,9 +24,23 @@ export class Device extends Document {
   @Prop({
     type: MongooseSchema.Types.String,
     trim: true,
+    default: null,
+  })
+  user_name: string;
+
+  @Prop({
+    type: MongooseSchema.Types.String,
+    trim: true,
     unique: true,
   })
   secret: string;
+
+  @Prop({
+    type: MongooseSchema.Types.String,
+    trim: true,
+    unique: true,
+  })
+  public_key: string;
 
   @Prop({
     type: MongooseSchema.Types.String,
@@ -61,14 +75,6 @@ export class Device extends Document {
 
   @Prop({ trim: true, default: null })
   os_version: string;
-
-  @Prop({
-    type: MongooseSchema.Types.String,
-    trim: true,
-    default: 'unknown',
-    set: (value: string) => value.toLowerCase().trim(),
-  })
-  store: string;
 
   @Prop({
     type: MongooseSchema.Types.String,
@@ -134,5 +140,6 @@ DeviceSchema.pre<Device>('save', async function (next) {
     this.name = DeviceLoader.getDeviceMarketingNameByModel(this.model);
     this.brand = DeviceLoader.getDeviceBrandByModel(this.model);
   }
+  this.user_name = this.name;
   next();
 });

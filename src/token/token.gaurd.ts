@@ -4,17 +4,17 @@ import {
   HttpStatus,
   Injectable,
 } from '@nestjs/common';
-import { UserService } from '../user/user.service';
 import { TokenService } from './token.service';
 import { ResponseException } from '../network/response.exception';
 import Translate from '../utilities/locale/locale.translation';
 import { JwtService } from '@nestjs/jwt';
 import { TokenStatusEnum } from './enum/token.status.enum';
+import { DeviceService } from "../device/device.service";
 
 @Injectable()
 export class TokenGuard implements CanActivate {
   constructor(
-    private readonly userService: UserService,
+    private readonly deviceService: DeviceService,
     private readonly jwtService: JwtService,
     private readonly tokenService: TokenService,
   ) {}
@@ -101,8 +101,8 @@ export class TokenGuard implements CanActivate {
         HttpStatus.UNAUTHORIZED,
       );
     }
-    request.user = await this.userService.findById(
-      token.user,
+    request.device = await this.deviceService.findById(
+      token.device,
       'first_name last_name phone_number tag _id',
     );
     return true;

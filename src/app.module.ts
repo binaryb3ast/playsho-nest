@@ -5,21 +5,13 @@ import { JwtModule } from '@nestjs/jwt';
 import * as process from 'process';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { UserModule } from './user/user.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { TokenModule } from './token/token.module';
 import { TerminusModule } from '@nestjs/terminus';
 import { HealthModule } from './health/health.module';
 import { DeviceModule } from './device/device.module';
-import { PassportModule } from './passport/passport.module';
-import { MajorModule } from './major/major.module';
-import { SubjectModule } from './subject/subject.module';
-import { TokenGuard } from './token/token.gaurd';
-import { ChapterModule } from './chapter/chapter.module';
-import { QuestionModule } from './question/question.module';
-import { AnswerModule } from './answer/answer.module';
-import { CurrencyModule } from './currency/currency.module';
+
 
 @Module({
   imports: [
@@ -45,16 +37,8 @@ import { CurrencyModule } from './currency/currency.module';
       errorLogStyle: 'pretty',
     }),
     HealthModule,
-    UserModule,
     TokenModule,
     DeviceModule,
-    PassportModule,
-    MajorModule,
-    SubjectModule,
-    ChapterModule,
-    QuestionModule,
-    AnswerModule,
-    CurrencyModule,
   ],
   controllers: [AppController],
   providers: [

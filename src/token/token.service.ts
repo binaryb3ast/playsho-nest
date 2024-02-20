@@ -8,12 +8,11 @@ import { TokenCreateDto } from './dto/token.create.dto';
 export class TokenService {
   constructor(@InjectModel(Token.name) private readonly model: Model<Token>) {}
 
-  async findOneByUserDevice(
+  async findOneByDevice(
     device: any,
-    user: any,
     projection = '',
   ): Promise<Token> {
-    return this.model.findOne({ device, user }).select(projection);
+    return this.model.findOne({ device  }).select(projection);
   }
 
   async findByIdentifier(identifier: string, projection = ''): Promise<Token> {

@@ -2,7 +2,6 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema } from 'mongoose';
 import AppCryptography from '../utilities/app.cryptography';
 import { Device } from '../device/device.entity';
-import { User } from '../user/user.entity';
 import { TokenStatusEnum } from './enum/token.status.enum';
 
 @Schema()
@@ -23,14 +22,6 @@ export class Token extends Document {
     index: true,
   })
   identifier: string;
-
-  @Prop({
-    type: MongooseSchema.Types.ObjectId,
-    ref: User.name,
-    default: null,
-    required: true,
-  })
-  user: MongooseSchema.Types.ObjectId;
 
   @Prop({
     type: MongooseSchema.Types.ObjectId,

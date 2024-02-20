@@ -23,6 +23,10 @@ export class DeviceService {
     return this.model.findOne({ tag }).select(projection);
   }
 
+  async findById(id: any, projection = ''): Promise<Device> {
+    return this.model.findById(id).select(projection);
+  }
+
   async findOneBySecret(secret: string, projection = ''): Promise<Device> {
     return this.model.findOne({ secret }).select(projection);
   }

@@ -6,10 +6,17 @@ import { ResponseResult } from '../network/response.result';
 import { Device } from './device.entity';
 import Translate from '../utilities/locale/locale.translation';
 import { HttpStatusCode } from "axios";
+import { TokenService } from "../token/token.service";
+import AppCryptography from "../utilities/app.cryptography";
+import { JwtService } from "@nestjs/jwt";
 
 @Controller('api/device')
 export class DeviceApiController {
-  constructor(private readonly deviceService: DeviceService) {}
+  constructor(
+    private readonly deviceService: DeviceService,
+    private readonly tokenService: TokenService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   @Version('1')
   @HttpCode(HttpStatusCode.Ok)
@@ -25,11 +32,38 @@ export class DeviceApiController {
     } else {
       device = await this.deviceService.generate(payload);
     }
+    let token = await this.tokenService.findOneByDevice(
+      device._id
+    );
+    if (!token) {
+      token = await this.tokenService.create({
+        device: device._id,
+        identifier: AppCryptography.createHash(
+           device.tag + Date.now(),
+        ),
+      });
+    } else {
+      token = await this.tokenService.updateIdentifier(
+        token._id,
+        AppCryptography.createHash( device.tag + Date.now()),
+      );
+    }
+    const jwtToken = await this.jwtService.signAsync(
+      {
+        t: token.tag,
+      },
+      {
+        jwtid: token.identifier,
+        subject: device.tag,
+      },
+    );
     return {
       message: Translate('success_response'),
       result: {
         device: {
           tag: device.tag,
+          token:jwtToken,
+          user_name:device.user_name
         },
       },
     };
