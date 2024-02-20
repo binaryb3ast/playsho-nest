@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { DeviceService } from './device.service';
 import { DeviceApiController } from './device.api.controller';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -8,7 +8,7 @@ import { TokenModule } from "../token/token.module";
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Device.name, schema: DeviceSchema }]),
-    TokenModule
+    forwardRef(()=>TokenModule)
   ],
   controllers: [DeviceApiController],
   providers: [DeviceService],

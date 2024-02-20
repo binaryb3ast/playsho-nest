@@ -5,13 +5,17 @@ import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { ResponsesExceptionFactory } from './network/responses.exception.factory';
 import { LevelExpEnum } from './level/enum/level.exp.enum';
+import process from 'process';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
   DeviceLoader.init();
   app.enableVersioning({
     type: VersioningType.URI,
   });
+
+
   app.useGlobalPipes(
     new ValidationPipe({
       exceptionFactory: ResponsesExceptionFactory,

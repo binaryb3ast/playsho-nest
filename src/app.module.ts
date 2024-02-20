@@ -11,6 +11,7 @@ import { TokenModule } from './token/token.module';
 import { TerminusModule } from '@nestjs/terminus';
 import { HealthModule } from './health/health.module';
 import { DeviceModule } from './device/device.module';
+import { RoomModule } from './room/room.module';
 
 
 @Module({
@@ -19,9 +20,7 @@ import { DeviceModule } from './device/device.module';
       isGlobal: true,
     }),
     MongooseModule.forRoot(
-      process.env.NODE_ENV == 'development'
-        ? process.env.MONGO_URL_LOCAL
-        : process.env.MONGO_URL_REMOTE,
+     "mongodb://admin:eKN6x5pAMufN9GP@217.144.106.105:27017/alpha?authSource=admin"
     ),
     ThrottlerModule.forRoot([
       {
@@ -39,6 +38,7 @@ import { DeviceModule } from './device/device.module';
     HealthModule,
     TokenModule,
     DeviceModule,
+    RoomModule,
   ],
   controllers: [AppController],
   providers: [
