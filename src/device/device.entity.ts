@@ -63,7 +63,7 @@ export class Device extends Document {
     default: null,
     set: (value: string) => value.toLowerCase().trim(),
   })
-  model: string;
+  device_model: string;
 
   @Prop({
     type: MongooseSchema.Types.String,
@@ -137,8 +137,8 @@ DeviceSchema.index({ tag: 1 });
 DeviceSchema.pre<Device>('save', async function (next) {
   this.name = `${this.brand} ${this.model}`;
   if (this.brand !== 'apple') {
-    this.name = DeviceLoader.getDeviceMarketingNameByModel(this.model);
-    this.brand = DeviceLoader.getDeviceBrandByModel(this.model);
+    this.name = DeviceLoader.getDeviceMarketingNameByModel(this.device_model);
+    this.brand = DeviceLoader.getDeviceBrandByModel(this.device_model);
   }
   this.user_name = this.name;
   next();

@@ -12,6 +12,7 @@ import { TerminusModule } from '@nestjs/terminus';
 import { HealthModule } from './health/health.module';
 import { DeviceModule } from './device/device.module';
 import { RoomModule } from './room/room.module';
+import { RoomGateway } from "./room/room.gateway";
 
 
 @Module({
@@ -20,7 +21,7 @@ import { RoomModule } from './room/room.module';
       isGlobal: true,
     }),
     MongooseModule.forRoot(
-     ""
+     process.env.MONGO_URL_LOCAL
     ),
     ThrottlerModule.forRoot([
       {
@@ -43,6 +44,7 @@ import { RoomModule } from './room/room.module';
   controllers: [AppController],
   providers: [
     AppService,
+    RoomGateway,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
