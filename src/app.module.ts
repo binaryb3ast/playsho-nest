@@ -20,7 +20,7 @@ import { RoomModule } from './room/room.module';
       isGlobal: true,
     }),
     MongooseModule.forRoot(
-     "mongodb://admin:eKN6x5pAMufN9GP@217.144.106.105:27017/alpha?authSource=admin"
+     ""
     ),
     ThrottlerModule.forRoot([
       {
