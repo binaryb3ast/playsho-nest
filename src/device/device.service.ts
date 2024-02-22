@@ -27,6 +27,14 @@ export class DeviceService {
     return this.model.findById(id).select(projection);
   }
 
+  async updateSocketId(id: any,socket_id:string, projection = ''): Promise<Device> {
+    return this.model.findByIdAndUpdate(id , {socket_id} , {new:true}).select(projection);
+  }
+
+  async updateSocketIdByTag(tag: any,socket_id:string, projection = ''): Promise<Device> {
+    return this.model.findOneAndUpdate({tag:tag} , {socket_id} , {new:true}).select(projection);
+  }
+
   async findOneBySecret(secret: string, projection = ''): Promise<Device> {
     return this.model.findOne({ secret }).select(projection);
   }

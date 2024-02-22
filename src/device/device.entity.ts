@@ -31,6 +31,13 @@ export class Device extends Document {
   @Prop({
     type: MongooseSchema.Types.String,
     trim: true,
+    default: null,
+  })
+  socket_id: string;
+
+  @Prop({
+    type: MongooseSchema.Types.String,
+    trim: true,
     unique: true,
   })
   secret: string;

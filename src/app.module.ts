@@ -12,7 +12,7 @@ import { TerminusModule } from '@nestjs/terminus';
 import { HealthModule } from './health/health.module';
 import { DeviceModule } from './device/device.module';
 import { RoomModule } from './room/room.module';
-import { RoomGateway } from "./room/room.gateway";
+import { AppGateway } from "./app.gateway";
 
 
 @Module({
@@ -44,7 +44,7 @@ import { RoomGateway } from "./room/room.gateway";
   controllers: [AppController],
   providers: [
     AppService,
-    RoomGateway,
+    AppGateway,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,

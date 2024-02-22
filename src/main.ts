@@ -26,6 +26,7 @@ async function bootstrap() {
   );
   console.log('You are level ' + findLevel(33560));
   await app.listen(3000);
+  app.enableShutdownHooks();
 }
 
 function findLevel(exp: number): number | undefined {

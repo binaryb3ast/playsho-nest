@@ -57,7 +57,7 @@ export class TokenGuard implements CanActivate {
 
     const token = await this.tokenService.findByIdentifier(
       jwtParsed.jti,
-      'status tag locked_until user',
+      'status tag locked_until device',
     );
     if (!token) {
       throw new ResponseException(
@@ -103,7 +103,7 @@ export class TokenGuard implements CanActivate {
     }
     request.device = await this.deviceService.findById(
       token.device,
-      'first_name last_name phone_number tag _id',
+      'tag _id',
     );
     return true;
   }

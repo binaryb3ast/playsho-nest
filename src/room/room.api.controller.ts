@@ -9,8 +9,8 @@ import AppCryptography from '../utilities/app.cryptography';
 import Translate from '../utilities/locale/locale.translation';
 import { TokenGuard } from '../token/token.gaurd';
 
-@Controller('room')
-export class RoomController {
+@Controller('api/room')
+export class RoomApiController {
   constructor(private readonly roomService: RoomService) {
   }
 
@@ -27,7 +27,9 @@ export class RoomController {
 
     return {
       message: Translate('success_response'),
-      result: {},
+      result: {
+        room:room
+      },
     };
   }
 }
