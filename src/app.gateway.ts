@@ -1,4 +1,6 @@
 import {
+  ConnectedSocket,
+  MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
   OnGatewayInit,
@@ -33,7 +35,13 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
 
   async handleConnection(client: Socket, ...args: any[]) {
     this.logger.log(`Client connected: ${client.id}`);
-    const jwtParsed: JwtParseInterface = await this.jwtService.verifyAsync(String(client.handshake.query.token));
+    let tokenQuery = client.handshake.query.token || client.handshake.headers.query;
+    let jwtParsed: JwtParseInterface
+    try {
+      jwtParsed = await this.jwtService.verifyAsync(String(tokenQuery.toString().replace("token=" , "")));
+    }catch (e) {
+      throw new WsException("Invalid credentials. T");
+    }
     const token = await this.tokenService.findByIdentifier(
       jwtParsed.jti,
       "status tag locked_until device"
@@ -57,7 +65,13 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
 
   async handleDisconnect(client: Socket) {
     this.logger.log(`Client disconnected: ${client.id}`);
-    const jwtParsed: JwtParseInterface = await this.jwtService.verifyAsync(String(client.handshake.query.token));
+    let tokenQuery = client.handshake.query.token || client.handshake.headers.query;
+    let jwtParsed: JwtParseInterface
+    try {
+      jwtParsed = await this.jwtService.verifyAsync(String(tokenQuery.toString().replace("token=" , "")));
+    }catch (e) {
+      throw new WsException("Invalid credentials. T");
+    }
     await this.deviceService.updateSocketIdByTag(
       jwtParsed.sub,
       "",
@@ -66,8 +80,18 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   }
 
   @SubscribeMessage("room_msg")
-  async handleChatMessage(client: Socket, payload: { sender: object, room: string, message: string }) {
-    const jwtParsed: JwtParseInterface = await this.jwtService.verifyAsync(String(client.handshake.query.token));
+  async handleChatMessage(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() payload: { sender: object, room: string, message: string }
+  ) {
+    console.log(payload.message);
+    let tokenQuery = socket.handshake.query.token || socket.handshake.headers.query;
+    let jwtParsed: JwtParseInterface
+    try {
+      jwtParsed = await this.jwtService.verifyAsync(String(tokenQuery.toString().replace("token=" , "")));
+    }catch (e) {
+      throw new WsException("Invalid credentials. T");
+    }
     const device = await this.deviceService.findOneByTag(
       jwtParsed.sub,
       "user_name tag"
@@ -80,27 +104,45 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       message: payload.message,
       created_at: Date.now()
     };
-    this.server.to(payload.room).emit("new_message", packet);
+    socket.broadcast.to(payload.room).emit("new_message", packet);
+  }
+
+  @SubscribeMessage("trade")
+  async handleTrade(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() payload
+  ) {
+    console.log(payload);
   }
 
   @SubscribeMessage("join")
-  async handleJoinRoom(client: Socket, payload: { sender: string, room: string }) {
-    const jwtParsed: JwtParseInterface = await this.jwtService.verifyAsync(String(client.handshake.query.token));
+  async handleJoinRoom(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() payload: { sender: object, room: string, message: string , public_key:string }
+  ) {
+    let tokenQuery = socket.handshake.query.token || socket.handshake.headers.query;
+    let jwtParsed: JwtParseInterface
+    try {
+      jwtParsed = await this.jwtService.verifyAsync(String(tokenQuery.toString().replace("token=" , "")));
+    }catch (e) {
+      throw new WsException("Invalid credentials. T");
+    }
     const device = await this.deviceService.findOneByTag(
       jwtParsed.sub,
       "user_name tag"
     );
-    this.logger.log(`client ${device.user_name} wants to join ${payload.room}`);
-    client.join(payload.room);
+    this.logger.log(`client ${device.user_name} wants to join ${payload.room} 😍`);
+    socket.join(payload.room);
+    device.public_key = payload.public_key
     let packet = {
       tag:AppCryptography.generateUUID().toString(),
       type: "system",
       sender: device,
-      message:`${device.user_name} has join the room`,
+      message:`${device.user_name} has join the room 😍`,
       room: payload.room,
       created_at: Date.now()
     };
-    this.server.to(payload.room).emit("joined", packet);
+    socket.broadcast.to(payload.room).emit("joined", packet);
   }
 
   @SubscribeMessage("link")
@@ -132,22 +174,30 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   }
 
   @SubscribeMessage("leave")
-  async handleLeftRoom(client: Socket, payload: { room: string }) {
-    const jwtParsed: JwtParseInterface = await this.jwtService.verifyAsync(String(client.handshake.query.token));
+  async handleLeftRoom(socket: Socket, payload: { room: string }) {
+    let tokenQuery = socket.handshake.query.token || socket.handshake.headers.query;
+    let jwtParsed: JwtParseInterface
+    try {
+      jwtParsed = await this.jwtService.verifyAsync(String(tokenQuery.toString().replace("token=" , "")));
+    }catch (e) {
+      throw new WsException("Invalid credentials. T");
+    }
     const device = await this.deviceService.findOneByTag(
       jwtParsed.sub,
       "user_name tag"
     );
-    client.leave(payload.room);
+    socket.leave(payload.room);
     let packet = {
       tag:AppCryptography.generateUUID().toString(),
       type: "system",
       sender: device,
-      message:`${device.user_name} has left the room`,
+      message:`${device.user_name} has left the room 👋.`,
       room: payload.room,
       created_at: Date.now()
     };
-    client.emit("left", packet);
+    socket.broadcast.to(payload.room).emit("left", packet);
+    this.logger.log(`client ${device.user_name} leave the room ${payload.room} 👋`);
+
   }
 
 }

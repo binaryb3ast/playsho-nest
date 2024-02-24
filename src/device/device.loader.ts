@@ -29,12 +29,12 @@ export class DeviceLoader {
   }
 
   static getDeviceMarketingNameByModel(model: string): string {
-    const obj = this.deviceHashMap.get(model.toLowerCase().trim());
+    const obj = this.deviceHashMap.get(model?.toLowerCase().trim());
     return obj ? obj['name'] : 'unknown';
   }
 
   static getDeviceBrandByModel(model: string): string {
-    const obj = this.deviceHashMap.get(model.toLowerCase().trim());
+    const obj = this.deviceHashMap.get(model?.toLowerCase().trim());
     return obj ? obj['﻿branding'] : 'unknown';
   }
 }
