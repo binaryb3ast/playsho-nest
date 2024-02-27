@@ -24,7 +24,7 @@ export class Device extends Document {
   @Prop({
     type: MongooseSchema.Types.String,
     trim: true,
-    default: null,
+    default: "unknown",
   })
   user_name: string;
 

@@ -28,7 +28,7 @@ export class Room extends Document {
     default: null,
     required: true,
   })
-  device: MongooseSchema.Types.ObjectId;
+  owner: MongooseSchema.Types.ObjectId;
 
   @Prop({
     type: MongooseSchema.Types.String,
@@ -36,6 +36,20 @@ export class Room extends Document {
     default: null,
   })
   stream_link: string;
+
+  @Prop({
+    type: MongooseSchema.Types.String,
+    trim: true,
+    default: null,
+  })
+  room_key: string;
+
+  @Prop({
+    type:  MongooseSchema.Types.Array,
+    trim: true,
+    default: null,
+  })
+  members:  string[];
 
   @Prop({
     type: MongooseSchema.Types.Date,
@@ -58,5 +72,6 @@ RoomSchema.pre<Room>('updateOne', async function (next) {
 });
 
 RoomSchema.pre<Room>('save', async function (next) {
+  this.room_key = AppCryptography.generateRandomByte(32);
   next();
 });

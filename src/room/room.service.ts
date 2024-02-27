@@ -15,4 +15,8 @@ export class RoomService {
   async create(payload: RoomCreateDto): Promise<Room> {
     return await new this.model(payload).save();
   }
+
+  async findByTag(tag:string , projection:string = "") {
+    return this.model.findOne({tag}).select(projection)
+  }
 }

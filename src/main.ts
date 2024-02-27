@@ -24,7 +24,6 @@ async function bootstrap() {
       exceptionFactory: ResponsesExceptionFactory,
     }),
   );
-  console.log('You are level ' + findLevel(33560));
   await app.listen(3000);
   app.enableShutdownHooks();
 }

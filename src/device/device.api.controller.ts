@@ -25,7 +25,6 @@ export class DeviceApiController {
     @Req() request: Request,
     @Body() payload: DeviceGenerateDto,
   ): Promise<ResponseResult<any>> {
-    console.log(payload);
     let device: Device;
     const isExist = await this.deviceService.isSecretExist(payload.secret);
     if (isExist) {

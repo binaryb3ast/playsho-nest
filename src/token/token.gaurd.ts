@@ -103,7 +103,7 @@ export class TokenGuard implements CanActivate {
     }
     request.device = await this.deviceService.findById(
       token.device,
-      'tag _id',
+      'tag _id public_key',
     );
     return true;
   }

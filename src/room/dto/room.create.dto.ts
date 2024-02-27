@@ -11,5 +11,5 @@ export class RoomCreateDto {
 
   @IsNotEmpty({ message: Translate('it_cant_be_empty', 'device') })
   @IsString({ message: Translate('it_cant_be_empty', 'device') })
-  device: string;
+  owner: string;
 }
