@@ -17,7 +17,7 @@ import { JwtService } from "@nestjs/jwt";
 import AppCryptography from "./utilities/app.cryptography";
 import { RoomService } from "./room/room.service";
 
-@WebSocketGateway( { cors: { origin: "*" } })
+@WebSocketGateway( 7777,{ cors: { origin: "*" } })
 export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
 
   private logger: Logger = new Logger("AppGateway");

@@ -142,6 +142,7 @@ export const DeviceSchema = SchemaFactory.createForClass(Device);
 DeviceSchema.index({ tag: 1 });
 
 DeviceSchema.pre<Device>('save', async function (next) {
+
   this.name = `${this.brand} ${this.model}`;
   if (this.brand !== 'apple') {
     this.name = DeviceLoader.getDeviceMarketingNameByModel(this.device_model);

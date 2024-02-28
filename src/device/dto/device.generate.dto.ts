@@ -27,7 +27,7 @@ export class DeviceGenerateDto {
   @IsNotEmpty({ message: Translate('it_cant_be_empty', 'model') })
   @IsString({ message: Translate('it_cant_be_empty', 'model') })
   @Transform(({ value }: TransformFnParams) => value.toLowerCase().trim())
-  model: string;
+  device_model: string;
 
   @IsNotEmpty({ message: Translate('it_cant_be_empty', 'manufacturer') })
   @IsString({ message: Translate('it_cant_be_empty', 'manufacturer') })

@@ -11,7 +11,7 @@ export class Room extends Document {
     trim: true,
     unique: true,
     index: true,
-    default: () => AppCryptography.generateUUID(),
+    default: () => AppCryptography.generateNanoID(5),
   })
   tag: string;
 
