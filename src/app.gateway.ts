@@ -16,8 +16,10 @@ import { TokenService } from "./token/token.service";
 import { JwtService } from "@nestjs/jwt";
 import AppCryptography from "./utilities/app.cryptography";
 import { RoomService } from "./room/room.service";
+import { Schema as MongooseSchema } from "mongoose";
+import { MemberService } from "./member/member.service";
 
-@WebSocketGateway( 7777,{ cors: { origin: "*" } })
+@WebSocketGateway(7777, { cors: { origin: "*" } })
 export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
 
   private logger: Logger = new Logger("AppGateway");
@@ -26,6 +28,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   constructor(
     private readonly deviceService: DeviceService,
     private readonly jwtService: JwtService,
+    private readonly memberService: MemberService,
     private readonly tokenService: TokenService,
     private readonly roomService: RoomService
   ) {
@@ -48,7 +51,6 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       jwtParsed.jti,
       "status tag locked_until device"
     );
-    console.log(token);
     if (!token) {
       client.disconnect();
       throw new WsException("Invalid credentials. T");
@@ -87,7 +89,6 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     @ConnectedSocket() socket: Socket,
     @MessageBody() payload: { room: string, message: string }
   ) {
-    console.log(payload.message);
     let tokenQuery = socket.handshake.query.token || socket.handshake.headers.query;
     let jwtParsed: JwtParseInterface;
     try {
@@ -99,7 +100,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       jwtParsed.sub,
       "user_name tag"
     );
-    let room = await this.roomService.findByTag(payload.room , 'room_key');
+    let room = await this.roomService.findByTag(payload.room, "room_key");
     let packet = {
       tag: AppCryptography.generateUUID().toString(),
       type: "user",
@@ -109,24 +110,6 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       created_at: Date.now()
     };
     this.server.to(payload.room).emit("new_message", packet);
-  }
-
-  @SubscribeMessage("trade")
-  async handleTrade(
-    @ConnectedSocket() socket: Socket,
-    @MessageBody() payload: {
-      sender: {
-        tag: string,
-        public_key: string
-      },
-      receiver: { tag: string }
-    }
-  ) {
-    let receiverDevice = await this.deviceService.findOneByTag(payload.receiver.tag )
-    if (!receiverDevice) return
-    socket.to(receiverDevice.socket_id).emit("exchange" , {
-      sender: payload.sender
-    })
   }
 
   @SubscribeMessage("join")
@@ -147,16 +130,22 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     );
     this.logger.log(`client ${device.user_name} wants to join ${payload.room} 😍`);
     socket.join(payload.room);
-    device.public_key = payload.public_key;
     let packet = {
       tag: AppCryptography.generateUUID().toString(),
       type: "system",
       sender: device,
-      message: `${device.user_name} has join the room 😍`,
+      message: `${device.user_name} has joined the room 😍`,
       room: payload.room,
       created_at: Date.now()
     };
-    socket.broadcast.to(payload.room).emit("joined", packet);
+    let member = await this.memberService.create({
+      room: packet.room,
+      device: device._id
+    });
+    let packetJson = JSON.parse( JSON.stringify( packet))
+    packetJson.sender["color"] = member.color
+    console.log(packetJson);
+    socket.broadcast.to(payload.room).emit("joined", packetJson);
   }
 
   @SubscribeMessage("link")
@@ -210,6 +199,10 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
       created_at: Date.now()
     };
     socket.broadcast.to(payload.room).emit("left", packet);
+    await this.memberService.deleteFromRoom({
+      room:payload.room,
+      device:device._id
+    })
     this.logger.log(`client ${device.user_name} leave the room ${payload.room} 👋`);
 
   }

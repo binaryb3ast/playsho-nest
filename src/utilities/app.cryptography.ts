@@ -114,7 +114,8 @@ export default class AppCryptography {
   }
 
   static stringToPublicKey(publicKeyStr) {
-    return Crypto.createPublicKey(publicKeyStr);
+    console.log(publicKeyStr);
+    return  Crypto.createPublicKey(publicKeyStr);
   }
 
   static generateHexPBKDF2 = (pass, slat, integration, keyLen, digest) => {

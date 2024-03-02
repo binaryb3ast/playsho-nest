@@ -5,12 +5,14 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Room, RoomSchema } from './room.entity';
 import { DeviceModule } from '../device/device.module';
 import { TokenModule } from '../token/token.module';
+import { MemberModule } from "../member/member.module";
 
 @Module({
   imports:[
     MongooseModule.forFeature([{ name: Room.name, schema: RoomSchema }]),
     DeviceModule,
-    TokenModule
+    TokenModule,
+    MemberModule
   ],
   controllers: [RoomApiController],
   providers: [RoomService],

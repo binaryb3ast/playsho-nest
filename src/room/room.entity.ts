@@ -45,11 +45,18 @@ export class Room extends Document {
   room_key: string;
 
   @Prop({
-    type:  MongooseSchema.Types.Array,
+    type:{},
     trim: true,
     default: null,
   })
-  members:  string[];
+  members: {
+    tag:MongooseSchema.Types.String,
+    color:MongooseSchema.Types.String,
+    state:MongooseSchema.Types.String,
+    user_name:MongooseSchema.Types.String,
+    joined_at:MongooseSchema.Types.Date,
+    device:MongooseSchema.Types.ObjectId,
+  };
 
   @Prop({
     type: MongooseSchema.Types.Date,

@@ -13,6 +13,7 @@ import { HealthModule } from './health/health.module';
 import { DeviceModule } from './device/device.module';
 import { RoomModule } from './room/room.module';
 import { AppGateway } from "./app.gateway";
+import { MemberModule } from './member/member.module';
 
 
 @Module({
@@ -40,6 +41,7 @@ import { AppGateway } from "./app.gateway";
     TokenModule,
     DeviceModule,
     RoomModule,
+    MemberModule,
   ],
   controllers: [AppController],
   providers: [
