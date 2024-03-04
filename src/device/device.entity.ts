@@ -45,13 +45,6 @@ export class Device extends Document {
   @Prop({
     type: MongooseSchema.Types.String,
     trim: true,
-    unique: true,
-  })
-  public_key: string;
-
-  @Prop({
-    type: MongooseSchema.Types.String,
-    trim: true,
     default: null,
   })
   fcm_token: string;

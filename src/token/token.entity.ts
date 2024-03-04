@@ -32,6 +32,13 @@ export class Token extends Document {
   device: MongooseSchema.Types.ObjectId;
 
   @Prop({
+    type: MongooseSchema.Types.String,
+    trim: true,
+    unique: true,
+  })
+  public_key: string;
+
+  @Prop({
     trim: true,
     default: TokenStatusEnum.ACTIVE,
     enum: TokenStatusEnum,

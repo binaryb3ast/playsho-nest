@@ -32,4 +32,16 @@ export class TokenService {
       { new: true },
     );
   }
+
+  async updatePublicKey(id: any, public_key: string): Promise<Token> {
+    return this.model.findByIdAndUpdate(
+      id,
+      {
+        public_key: public_key,
+      },
+      { new: true },
+    );
+  }
+
+
 }

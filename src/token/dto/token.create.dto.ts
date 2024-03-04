@@ -10,4 +10,8 @@ export class TokenCreateDto {
   @IsNotEmpty({ message: Translate('it_cant_be_empty', 'device') })
   @IsString({ message: Translate('it_cant_be_empty', 'device') })
   identifier: string;
+
+  @IsNotEmpty({ message: Translate('it_cant_be_empty', 'device') })
+  @IsString({ message: Translate('it_cant_be_empty', 'device') })
+  public_key: string;
 }

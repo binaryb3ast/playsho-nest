@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Device } from './device.entity';
 import { DeviceGenerateDto } from './dto/device.generate.dto';
+import { Token } from "../token/token.entity";
 
 @Injectable()
 export class DeviceService {
@@ -37,5 +38,14 @@ export class DeviceService {
 
   async findOneBySecret(secret: string, projection = ''): Promise<Device> {
     return this.model.findOne({ secret }).select(projection);
+  }
+  async updateName(id: any, name: string): Promise<Device> {
+    return this.model.findByIdAndUpdate(
+      id,
+      {
+        user_name: name,
+      },
+      { new: true },
+    );
   }
 }

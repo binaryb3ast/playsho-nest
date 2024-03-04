@@ -40,8 +40,8 @@ export class RoomApiController {
     @Req() request: Request,
     @Param("tag") tag: string
   ): Promise<ResponseResult<any>> {
-    let room = await this.roomService.findByTag(tag , "stream_link tag status members room_key");
-    room.room_key = AppCryptography.encryptWithPublicKey(request["device"].public_key,room.room_key)
+    let room = await this.roomService.findByTag(tag , "stream_link tag status room_key");
+    room.room_key = AppCryptography.encryptWithPublicKey(request["token"].public_key,room.room_key)
     return {
       message: Translate("success_response"),
       result: {
@@ -50,4 +50,19 @@ export class RoomApiController {
     };
   }
 
+  @Version("1")
+  @UseGuards(TokenGuard)
+  @Get("/:tag/entrance")
+  async checkEntrance(
+    @Req() request: Request,
+    @Param("tag") tag: string
+  ): Promise<ResponseResult<any>> {
+    let room = await this.roomService.findByTag(tag , "tag status");
+    return {
+      message: Translate("success_response"),
+      result: {
+        room: room
+      }
+    };
+  }
 }

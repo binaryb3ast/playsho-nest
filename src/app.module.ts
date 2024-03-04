@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from "@nestjs/common";
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { JwtModule } from '@nestjs/jwt';
@@ -14,6 +14,7 @@ import { DeviceModule } from './device/device.module';
 import { RoomModule } from './room/room.module';
 import { AppGateway } from "./app.gateway";
 import { MemberModule } from './member/member.module';
+import { AppNameSanitizer } from "./utilities/app.namesanitizer";
 
 
 @Module({
@@ -47,6 +48,7 @@ import { MemberModule } from './member/member.module';
   providers: [
     AppService,
     AppGateway,
+    AppNameSanitizer,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
