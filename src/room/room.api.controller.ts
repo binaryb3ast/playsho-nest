@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, Param, Post, Req, UseGuards, Version } from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Req, UseGuards, Version } from "@nestjs/common";
 import { RoomService } from "./room.service";
 import { HttpStatusCode } from "axios";
 import { Request } from "express";
@@ -8,6 +8,8 @@ import { Device } from "../device/device.entity";
 import AppCryptography from "../utilities/app.cryptography";
 import Translate from "../utilities/locale/locale.translation";
 import { TokenGuard } from "../token/token.gaurd";
+import { ResponseException } from "../network/response.exception";
+import { RoomLinkDto } from "./dto/room.link.dto";
 
 @Controller("api/room")
 export class RoomApiController {
@@ -58,6 +60,20 @@ export class RoomApiController {
     @Param("tag") tag: string
   ): Promise<ResponseResult<any>> {
     let room = await this.roomService.findByTag(tag , "tag status");
+    if (!room){
+      throw new ResponseException(
+        {
+          errors: [
+            {
+              property: 'room',
+              message: Translate('room_not_found'),
+            },
+          ],
+          message: Translate('fail_response'),
+        },
+        HttpStatus.FORBIDDEN,
+      );
+    }
     return {
       message: Translate("success_response"),
       result: {
@@ -65,4 +81,38 @@ export class RoomApiController {
       }
     };
   }
+
+  @Version("1")
+  @HttpCode(HttpStatusCode.Ok)
+  @UseGuards(TokenGuard)
+  @Post("/:tag/link")
+  async addLink(
+    @Req() request: Request,
+    @Param("tag") tag: string,
+    @Body()payload:RoomLinkDto
+  ): Promise<ResponseResult<any>> {
+    let room = await this.roomService.findByTag(tag , "tag status");
+    if (!room){
+      throw new ResponseException(
+        {
+          errors: [
+            {
+              property: 'room',
+              message: Translate('room_not_found'),
+            },
+          ],
+          message: Translate('fail_response'),
+        },
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
+    return {
+      message: Translate("success_response"),
+      result: {
+        room: room
+      }
+    };
+  }
+
 }

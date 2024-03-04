@@ -19,6 +19,7 @@
   "disconnect": "Disconnected: Lost in the Cyberspace Abyss",
   "error": "Error: Gremlins on the Loose!",
   "android": "Android: Robot Power 🤖",
+  "room_not_found": "Oops! No movie room found. Try again or create a new one!",
   "ios": "iOS: Apple a Day Keeps the Bugs Away 🍏",
   "it_must_be_string": "$arg must be a string, or else it'll get lost in the Binary Bermuda Triangle!",
   "wrong_format": "Wrong Format: $arg is Dressed in Mismatched Socks 🧦",

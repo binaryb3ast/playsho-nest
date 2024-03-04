@@ -112,7 +112,7 @@ export class DeviceApiController {
           errors: [
             {
               property: 'user_name',
-              message: Translate('bad_name'),
+              message: Translate('room_not_found'),
             },
           ],
           message: Translate('fail_response'),
