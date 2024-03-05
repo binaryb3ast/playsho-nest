@@ -104,7 +104,7 @@ export class TokenGuard implements CanActivate {
     request.token = token;
     request.device = await this.deviceService.findById(
       token.device,
-      'tag _id',
+      'tag _id user_name',
     );
     return true;
   }

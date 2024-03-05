@@ -2,18 +2,22 @@ import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Req, UseGuard
 import { RoomService } from "./room.service";
 import { HttpStatusCode } from "axios";
 import { Request } from "express";
-import { DeviceGenerateDto } from "../device/dto/device.generate.dto";
 import { ResponseResult } from "../network/response.result";
-import { Device } from "../device/device.entity";
 import AppCryptography from "../utilities/app.cryptography";
 import Translate from "../utilities/locale/locale.translation";
 import { TokenGuard } from "../token/token.gaurd";
 import { ResponseException } from "../network/response.exception";
 import { RoomLinkDto } from "./dto/room.link.dto";
+import { GatewayService } from "../gateway/gateway.service";
+import { AppGatewayEventsEnum } from "../utilities/enum/app.gateway.events.enum";
+import { AppGatewayMsgEnum } from "../utilities/enum/app.gateway.msg.enum";
 
 @Controller("api/room")
 export class RoomApiController {
-  constructor(private readonly roomService: RoomService) {
+  constructor(
+    private readonly roomService: RoomService,
+    private readonly gatewayService: GatewayService
+  ) {
   }
 
   @Version("1")
@@ -42,8 +46,8 @@ export class RoomApiController {
     @Req() request: Request,
     @Param("tag") tag: string
   ): Promise<ResponseResult<any>> {
-    let room = await this.roomService.findByTag(tag , "stream_link tag status room_key");
-    room.room_key = AppCryptography.encryptWithPublicKey(request["token"].public_key,room.room_key)
+    let room = await this.roomService.findByTag(tag, "stream_link tag status room_key");
+    room.room_key = AppCryptography.encryptWithPublicKey(request["token"].public_key, room.room_key);
     return {
       message: Translate("success_response"),
       result: {
@@ -59,19 +63,19 @@ export class RoomApiController {
     @Req() request: Request,
     @Param("tag") tag: string
   ): Promise<ResponseResult<any>> {
-    let room = await this.roomService.findByTag(tag , "tag status");
-    if (!room){
+    let room = await this.roomService.findByTag(tag, "tag status");
+    if (!room) {
       throw new ResponseException(
         {
           errors: [
             {
-              property: 'room',
-              message: Translate('room_not_found'),
-            },
+              property: "room",
+              message: Translate("room_not_found")
+            }
           ],
-          message: Translate('fail_response'),
+          message: Translate("fail_response")
         },
-        HttpStatus.FORBIDDEN,
+        HttpStatus.FORBIDDEN
       );
     }
     return {
@@ -89,28 +93,41 @@ export class RoomApiController {
   async addLink(
     @Req() request: Request,
     @Param("tag") tag: string,
-    @Body()payload:RoomLinkDto
+    @Body() payload: RoomLinkDto
   ): Promise<ResponseResult<any>> {
-    let room = await this.roomService.findByTag(tag , "tag status");
-    if (!room){
+    console.log(payload);
+    let room = await this.roomService.findByTag(tag, "tag status");
+    if (!room) {
       throw new ResponseException(
         {
           errors: [
             {
-              property: 'room',
-              message: Translate('room_not_found'),
-            },
+              property: "room",
+              message: Translate("room_not_found")
+            }
           ],
-          message: Translate('fail_response'),
+          message: Translate("fail_response")
         },
-        HttpStatus.FORBIDDEN,
+        HttpStatus.FORBIDDEN
       );
     }
-
+    await this.roomService.updateLinkById(room._id, payload.stream_link, "code");
+    this.gatewayService.sendToRoomForAllUser(room.tag, AppGatewayEventsEnum.NEW_LINK, {
+      tag: AppCryptography.generateUUID().toString(),
+      type: AppGatewayMsgEnum.SYSTEM,
+      sender: request["device"],
+      room: room.tag,
+      payload:payload.stream_link,
+      message: `${request["device"].user_name} strikes again! Link successfully added. Lights, camera, action! 🌟🎥`,
+      created_at: Date.now()
+    });
     return {
-      message: Translate("success_response"),
+      message: Translate("stream_link_added"),
       result: {
-        room: room
+        room: {
+          tag: room.tag,
+          stream_link: payload.stream_link
+        }
       }
     };
   }

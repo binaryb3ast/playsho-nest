@@ -20,4 +20,8 @@ export class RoomService {
   async findByTag(tag: string, projection: string = "") {
     return this.model.findOne({ tag }).select(projection);
   }
+
+  async updateLinkById(id: any,link:string , projection: string = "") {
+    return this.model.findByIdAndUpdate(id , {stream_link : link} , {new:true}).select(projection);
+  }
 }

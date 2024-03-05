@@ -12,9 +12,10 @@ import { TerminusModule } from '@nestjs/terminus';
 import { HealthModule } from './health/health.module';
 import { DeviceModule } from './device/device.module';
 import { RoomModule } from './room/room.module';
-import { AppGateway } from "./app.gateway";
+import { GatewayServer } from "./gateway/gateway.server";
 import { MemberModule } from './member/member.module';
 import { AppNameSanitizer } from "./utilities/app.namesanitizer";
+import { GatewayModule } from "./gateway/gateway.module";
 
 
 @Module({
@@ -43,11 +44,12 @@ import { AppNameSanitizer } from "./utilities/app.namesanitizer";
     DeviceModule,
     RoomModule,
     MemberModule,
+    GatewayModule
   ],
   controllers: [AppController],
   providers: [
     AppService,
-    AppGateway,
+    GatewayServer,
     AppNameSanitizer,
     {
       provide: APP_GUARD,

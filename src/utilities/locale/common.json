@@ -21,6 +21,7 @@
   "android": "Android: Robot Power 🤖",
   "room_not_found": "Oops! No movie room found. Try again or create a new one!",
   "ios": "iOS: Apple a Day Keeps the Bugs Away 🍏",
+  "stream_link_added": "Stream link successfully added! Let's dive into the movie magic together! \uD83C\uDFAC✨",
   "it_must_be_string": "$arg must be a string, or else it'll get lost in the Binary Bermuda Triangle!",
   "wrong_format": "Wrong Format: $arg is Dressed in Mismatched Socks 🧦",
   "it_must_be_number": "$arg must be a number, or it'll get stuck in the Number Netherworld!",
