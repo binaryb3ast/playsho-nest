@@ -51,11 +51,11 @@ export class GatewayServer implements OnGatewayInit, OnGatewayConnection, OnGate
     );
     if (!token) {
       socket.disconnect();
-      throw new WsException("Invalid credentials. T");
+      return new WsException("Invalid credentials. T");
     }
     if (token.tag !== jwtParsed.t) {
       socket.disconnect();
-      throw new WsException("Invalid credentials. Tg");
+      return new WsException("Invalid credentials. Tg");
     }
 
     let device = await this.deviceService.updateSocketId(
@@ -115,7 +115,7 @@ export class GatewayServer implements OnGatewayInit, OnGatewayConnection, OnGate
       tag: AppCryptography.generateUUID().toString(),
       type: AppGatewayMsgEnum.SYSTEM,
       sender: device,
-      message: `${device.user_name} has joined the room 😍`,
+      message: `${device.user_name} has joined😍`,
       room: payload.room,
       created_at: Date.now()
     };
@@ -125,7 +125,7 @@ export class GatewayServer implements OnGatewayInit, OnGatewayConnection, OnGate
     });
     let packetJson = JSON.parse(JSON.stringify(packet));
     packetJson.sender["color"] = member.color;
-    this.gatewayService.sendToRoomExceptUser(socket, payload.room, AppGatewayEventsEnum.JOINED, packetJson);
+    this.gatewayService.sendToRoomForAllUser( payload.room, AppGatewayEventsEnum.JOINED, packetJson);
   }
 
   @SubscribeMessage("link")

@@ -95,7 +95,6 @@ export class RoomApiController {
     @Param("tag") tag: string,
     @Body() payload: RoomLinkDto
   ): Promise<ResponseResult<any>> {
-    console.log(payload);
     let room = await this.roomService.findByTag(tag, "tag status");
     if (!room) {
       throw new ResponseException(

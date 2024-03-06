@@ -114,7 +114,6 @@ export default class AppCryptography {
   }
 
   static stringToPublicKey(publicKeyStr) {
-    console.log(publicKeyStr);
     return  Crypto.createPublicKey(publicKeyStr);
   }
 
