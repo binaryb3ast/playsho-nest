@@ -44,13 +44,6 @@ export default class AppCryptography {
     keyLen: number,
     digest: string
   ): Promise<string> {
-    console.log({
-      pass,
-      salt,
-      iteration,
-      keyLen,
-      digest
-    });
     return Crypto.pbkdf2Sync(pass, salt, iteration, keyLen, digest).toString(
       "hex"
     );

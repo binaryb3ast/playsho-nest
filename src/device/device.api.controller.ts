@@ -60,7 +60,6 @@ export class DeviceApiController {
         payload.public_key
       );
     }
-    console.log(token);
     const jwtToken = await this.jwtService.signAsync(
       {
         t: token.tag
@@ -70,7 +69,6 @@ export class DeviceApiController {
         subject: device.tag
       }
     );
-    console.log(jwtToken);
     return {
       message: Translate("success_response"),
       result: {
