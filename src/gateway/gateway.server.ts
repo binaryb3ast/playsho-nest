@@ -87,7 +87,7 @@ export class GatewayServer implements OnGatewayInit, OnGatewayConnection, OnGate
       "user_name tag"
     );
     let room = await this.roomService.findByTag(payload.room, "room_key");
-    if (!room) return
+    if (!room) return;
     this.gatewayService.sendToRoomForAllUser(payload.room, AppGatewayEventsEnum.NEW_MESSAGE, {
       tag: AppCryptography.generateUUID().toString(),
       type: AppGatewayMsgEnum.USER,
@@ -125,11 +125,30 @@ export class GatewayServer implements OnGatewayInit, OnGatewayConnection, OnGate
     });
     let packetJson = JSON.parse(JSON.stringify(packet));
     packetJson.sender["color"] = member.color;
-    this.gatewayService.sendToRoomForAllUser( payload.room, AppGatewayEventsEnum.JOINED, packetJson);
+    this.gatewayService.sendToRoomForAllUser(payload.room, AppGatewayEventsEnum.JOINED, packetJson);
   }
 
-  @SubscribeMessage("link")
-  handleChangeLink(client: Socket, room: string) {
+  @SubscribeMessage("pause")
+  async handleChangePause(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() payload: { sender: object, room: string, message: string, public_key: string }
+  ) {
+    let jwtParsed = await this.authUserHandshake(socket);
+    const device = await this.deviceService.findOneByTag(
+      jwtParsed.sub,
+      "user_name tag"
+    );
+    this.logger.log(`client ${device.user_name} ${payload.message} 😍`);
+    let room = await this.roomService.findByTag(payload.room, "room_key");
+    if (!room) return;
+    this.gatewayService.sendToRoomForAllUser(payload.room, AppGatewayEventsEnum.NEW_MESSAGE, {
+      tag: AppCryptography.generateUUID().toString(),
+      type: AppGatewayMsgEnum.SYSTEM,
+      sender: device,
+      room: payload.room,
+      message: payload.message == "pause" ? `${device.user_name} hit pause! 🍿`: `${device.user_name} resumed the movie. 🎬`,
+      created_at: Date.now()
+    });
 
   }
 
@@ -188,7 +207,6 @@ export class GatewayServer implements OnGatewayInit, OnGatewayConnection, OnGate
       throw new WsException("Invalid credentials. T");
     }
   }
-
 
 
 }
