@@ -128,25 +128,35 @@ export class GatewayServer implements OnGatewayInit, OnGatewayConnection, OnGate
     this.gatewayService.sendToRoomForAllUser(payload.room, AppGatewayEventsEnum.JOINED, packetJson);
   }
 
-  @SubscribeMessage("pause")
+  @SubscribeMessage("player_state")
   async handleChangePause(
     @ConnectedSocket() socket: Socket,
-    @MessageBody() payload: { sender: object, room: string, message: string, public_key: string }
+    @MessageBody() payload: { sender: object, room: string, message: string, public_key: string, data: string }
   ) {
+    console.log(payload);
     let jwtParsed = await this.authUserHandshake(socket);
     const device = await this.deviceService.findOneByTag(
       jwtParsed.sub,
       "user_name tag"
     );
+    //== "pause" ? :
     this.logger.log(`client ${device.user_name} ${payload.message} 😍`);
     let room = await this.roomService.findByTag(payload.room, "room_key");
     if (!room) return;
+    let message = {
+      "idle": `Taking a breather.${device.user_name} prepping for the video.`,
+      "buffering": `Hold on a sec.${device.user_name} is gathering some data to keep the video smooth. @ ${payload.data}`,
+      "ready": `${device.user_name} is Ready! Press play to start the fun.`,
+      "ended": `[${device.user_name}],That's all, folks! Rewind, replay, or explore something new?`,
+      "pause": `${device.user_name} hit pause! 🍿 @ ${payload.data}`,
+      "resume": `${device.user_name} resumed the movie. 🎬 @ ${payload.data}`
+    };
     this.gatewayService.sendToRoomForAllUser(payload.room, AppGatewayEventsEnum.NEW_MESSAGE, {
       tag: AppCryptography.generateUUID().toString(),
       type: AppGatewayMsgEnum.SYSTEM,
       sender: device,
       room: payload.room,
-      message: payload.message == "pause" ? `${device.user_name} hit pause! 🍿`: `${device.user_name} resumed the movie. 🎬`,
+      message: message[payload.message],
       created_at: Date.now()
     });
 
