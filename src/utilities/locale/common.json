@@ -26,5 +26,13 @@
   "wrong_format": "Wrong Format: $arg is Dressed in Mismatched Socks 🧦",
   "it_must_be_number": "$arg must be a number, or it'll get stuck in the Number Netherworld!",
   "it_cant_be_empty": "$arg can't be empty, or it'll vanish into the Digital Void!",
-  "is_not_valid": "$arg not valid: It's Lost in Translation in the Digital Wonderland!"
+  "is_not_valid": "$arg not valid: It's Lost in Translation in the Digital Wonderland!",
+  "room_message_idle": "Taking a breather.$arg prepping for the video.",
+  "room_message_buffering": "Hold on a sec.$arg is gathering some data to keep the video smooth. @ $arg",
+  "room_message_ready": "$arg is Ready! Press play to start the fun.",
+  "room_message_ended": "[$arg],That's all, folks! Rewind, replay, or explore something new?",
+  "room_message_pause": "$arg hit pause! \uD83C\uDF7F @ $arg",
+  "room_message_resume": "$arg resumed the movie. \uD83C\uDFAC @ $arg",
+  "room_message_join": "$arg has joined\uD83D\uDE0D",
+  "room_message_left": "$arg has left the room \uD83D\uDC4B."
 }

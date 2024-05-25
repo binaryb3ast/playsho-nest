@@ -20,6 +20,9 @@ import { MemberService } from "../member/member.service";
 import { AppGatewayEventsEnum } from "../utilities/enum/app.gateway.events.enum";
 import { AppGatewayMsgEnum } from "../utilities/enum/app.gateway.msg.enum";
 import { GatewayService } from "./gateway.service";
+import { GatewayMessageEnum } from "./enum/gateway.message.enum";
+import Translate from "../utilities/locale/locale.translation";
+import { Room } from "../room/room.entity";
 
 @WebSocketGateway(7777, { cors: { origin: "*" } })
 export class GatewayServer implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
@@ -115,7 +118,7 @@ export class GatewayServer implements OnGatewayInit, OnGatewayConnection, OnGate
       tag: AppCryptography.generateUUID().toString(),
       type: AppGatewayMsgEnum.SYSTEM,
       sender: device,
-      message: `${device.user_name} has joined😍`,
+      message: Translate("room_message_join", device.user_name),
       room: payload.room,
       created_at: Date.now()
     };
@@ -139,17 +142,17 @@ export class GatewayServer implements OnGatewayInit, OnGatewayConnection, OnGate
       jwtParsed.sub,
       "user_name tag"
     );
-    //== "pause" ? :
     this.logger.log(`client ${device.user_name} ${payload.message} 😍`);
-    let room = await this.roomService.findByTag(payload.room, "room_key");
+    let room :Room = await this.roomService.findByTag(payload.room, "room_key");
     if (!room) return;
+
     let message = {
-      "idle": `Taking a breather.${device.user_name} prepping for the video.`,
-      "buffering": `Hold on a sec.${device.user_name} is gathering some data to keep the video smooth. @ ${payload.data}`,
-      "ready": `${device.user_name} is Ready! Press play to start the fun.`,
-      "ended": `[${device.user_name}],That's all, folks! Rewind, replay, or explore something new?`,
-      "pause": `${device.user_name} hit pause! 🍿 @ ${payload.data}`,
-      "resume": `${device.user_name} resumed the movie. 🎬 @ ${payload.data}`
+      "idle": Translate("room_message_idle", device.user_name),
+      "buffering": Translate("room_message_buffering", device.user_name, payload.data),
+      "ready": Translate("room_message_ready", device.user_name),
+      "ended": Translate("room_message_ended", device.user_name),
+      "pause": Translate("room_message_pause", device.user_name, payload.data),
+      "resume": Translate("room_message_resume", device.user_name, payload.data)
     };
     this.gatewayService.sendToRoomForAllUser(payload.room, AppGatewayEventsEnum.NEW_MESSAGE, {
       tag: AppCryptography.generateUUID().toString(),
@@ -160,26 +163,6 @@ export class GatewayServer implements OnGatewayInit, OnGatewayConnection, OnGate
       created_at: Date.now()
     });
 
-  }
-
-  @SubscribeMessage("player_error")
-  handlePlayerError(client: Socket, room: string) {
-  }
-
-  @SubscribeMessage("player_loading")
-  handleLoading(client: Socket, room: string) {
-  }
-
-  @SubscribeMessage("player_playing")
-  handlePlaying(client: Socket, room: string) {
-  }
-
-  @SubscribeMessage("player_state_changed")
-  handlePlayerStateChanged(client: Socket, room: string) {
-  }
-
-  @SubscribeMessage("player_position_changed")
-  handlePlayerPositionChanged(client: Socket, room: string) {
   }
 
   @SubscribeMessage("reaction")
@@ -198,7 +181,7 @@ export class GatewayServer implements OnGatewayInit, OnGatewayConnection, OnGate
       tag: AppCryptography.generateUUID().toString(),
       type: AppGatewayMsgEnum.SYSTEM,
       sender: device,
-      message: `${device.user_name} has left the room 👋.`,
+      message: Translate("room_message_left", device.user_name),
       room: payload.room,
       created_at: Date.now()
     });
