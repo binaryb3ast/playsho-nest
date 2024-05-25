@@ -23,6 +23,7 @@ import { GatewayService } from "./gateway.service";
 import { GatewayMessageEnum } from "./enum/gateway.message.enum";
 import Translate from "../utilities/locale/locale.translation";
 import { Room } from "../room/room.entity";
+import Validator from "../utilities/app.validator";
 
 @WebSocketGateway(7777, { cors: { origin: "*" } })
 export class GatewayServer implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
@@ -143,26 +144,36 @@ export class GatewayServer implements OnGatewayInit, OnGatewayConnection, OnGate
       "user_name tag"
     );
     this.logger.log(`client ${device.user_name} ${payload.message} 😍`);
-    let room :Room = await this.roomService.findByTag(payload.room, "room_key");
+    let room: Room = await this.roomService.findByTag(payload.room, "room_key");
     if (!room) return;
 
     let message = {
       "idle": Translate("room_message_idle", device.user_name),
-      "buffering": Translate("room_message_buffering", device.user_name, payload.data),
+      "buffering": Translate("room_message_buffering", device.user_name, this.formatTime(Number(payload.data))),
       "ready": Translate("room_message_ready", device.user_name),
       "ended": Translate("room_message_ended", device.user_name),
-      "pause": Translate("room_message_pause", device.user_name, payload.data),
-      "resume": Translate("room_message_resume", device.user_name, payload.data)
+      "pause": Translate("room_message_pause", device.user_name, this.formatTime(Number(payload.data))),
+      "resume": Translate("room_message_resume", device.user_name, this.formatTime(Number(payload.data))),
+      "scrub": Translate("room_message_scrub", device.user_name,this.formatTime(Number(payload.data)))
     };
     this.gatewayService.sendToRoomForAllUser(payload.room, AppGatewayEventsEnum.NEW_MESSAGE, {
       tag: AppCryptography.generateUUID().toString(),
       type: AppGatewayMsgEnum.SYSTEM,
       sender: device,
       room: payload.room,
+      data:Validator.isNull(payload.data) ? "0" : payload.data,
       message: message[payload.message],
       created_at: Date.now()
     });
 
+  }
+
+  formatTime(milliseconds) {
+    var totalSeconds = Math.floor(milliseconds / 1000);
+    var hours = Math.floor(totalSeconds / 3600);
+    var minutes = Math.floor((totalSeconds % 3600) / 60);
+    var seconds = totalSeconds % 60;
+    return ("0" + hours).slice(-2) + ":" + ("0" + minutes).slice(-2) + ":" + ("0" + seconds).slice(-2);
   }
 
   @SubscribeMessage("reaction")
