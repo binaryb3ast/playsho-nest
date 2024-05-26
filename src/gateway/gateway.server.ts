@@ -113,6 +113,7 @@ export class GatewayServer implements OnGatewayInit, OnGatewayConnection, OnGate
       jwtParsed.sub,
       "user_name tag"
     );
+    console.log(device);
     this.logger.log(`client ${device.user_name} wants to join ${payload.room} 😍`);
     socket.join(payload.room);
     let packet = {
@@ -156,11 +157,12 @@ export class GatewayServer implements OnGatewayInit, OnGatewayConnection, OnGate
       "resume": Translate("room_message_resume", device.user_name, this.formatTime(Number(payload.data))),
       "scrub": Translate("room_message_scrub", device.user_name,this.formatTime(Number(payload.data)))
     };
-    this.gatewayService.sendToRoomForAllUser(payload.room, AppGatewayEventsEnum.NEW_MESSAGE, {
+    this.gatewayService.sendToRoomExceptUser(socket,payload.room, AppGatewayEventsEnum.NEW_MESSAGE, {
       tag: AppCryptography.generateUUID().toString(),
       type: AppGatewayMsgEnum.SYSTEM,
       sender: device,
       room: payload.room,
+      action: payload.message,
       data:Validator.isNull(payload.data) ? "0" : payload.data,
       message: message[payload.message],
       created_at: Date.now()
